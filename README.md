@@ -33,7 +33,7 @@ npm run preview
 Clone the existing repo:
 
 ```bash
-git clone https://github.com/PatrickBossert/loyaltyagent.ai.git
+git clone https://github.com/PatrickBossert/loyaltyagent.git
 cd loyaltyagent.ai
 npm install
 npm run dev
@@ -46,7 +46,7 @@ cd loyaltyagent
 git init
 git add .
 git commit -m "Initial commit"
-git remote add origin https://github.com/PatrickBossert/loyaltyagent.ai.git
+git remote add origin https://github.com/PatrickBossert/loyaltyagent.git
 git branch -M main
 git push -u origin main
 ```
@@ -61,7 +61,7 @@ The GitHub Actions workflow triggers automatically and deploys to Cloudflare Pag
 
 1. Log into [Cloudflare Dashboard](https://dash.cloudflare.com)
 2. Go to **Workers & Pages** → **Create** → **Pages** → **Connect to Git**
-3. Select **PatrickBossert/loyaltyagent.ai** from the repository list
+3. Select **PatrickBossert/loyaltyagent** from the repository list
 4. Set build settings:
    - **Framework preset**: Vite
    - **Build command**: `npm run build`

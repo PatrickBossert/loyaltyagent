@@ -362,8 +362,7 @@ export default function App() {
             width: 10, height: 10, borderRadius: "50%",
             background: "#C9A84C", flexShrink: 0,
           }} />
-          loyalty<span style={{ color: "#C9A84C" }}>agent</span>
-          <span style={{ color: "#6B6050", fontSize: 13, fontWeight: 400, letterSpacing: 0 }}>.ai</span>
+          loyalty<span style={{ color: "#C9A84C" }}>agent</span><span style={{ color: "#6B6050", fontSize: 17, fontWeight: 400, letterSpacing: 0 }}>.ai</span>
         </div>
 
         <ul style={{ display: "flex", gap: 32, listStyle: "none" }}>
@@ -621,8 +620,7 @@ export default function App() {
         <div>
           <div style={{ ...s.logo, fontSize: 17, marginBottom: 6 }}>
             <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#C9A84C" }} />
-            loyalty<span style={{ color: "#C9A84C" }}>agent</span>
-            <span style={{ color: "#4B4030", fontSize: 12, fontWeight: 400 }}>.ai</span>
+            loyalty<span style={{ color: "#C9A84C" }}>agent</span><span style={{ color: "#4B4030", fontSize: 15, fontWeight: 400 }}>.ai</span>
           </div>
           <div style={{ fontFamily: "monospace", fontSize: 10, color: "#4B4030", letterSpacing: "0.08em" }}>
             The companion to Australia's Points Economy · © 2026
