@@ -1,637 +1,579 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 
-const SCHEMES = [
-  { name: "Qantas Frequent Flyer", logo: "✈️", points: 124850, value: "$2,497", trend: "+12%", color: "#E8002D", category: "airline" },
-  { name: "Velocity Frequent Flyer", logo: "🟠", points: 43200, value: "$648", trend: "+5%", color: "#FF6900", category: "airline" },
-  { name: "Flybuys", logo: "🛒", points: 8940, value: "$44", trend: "-2%", color: "#E31837", category: "retail" },
-  { name: "Everyday Rewards", logo: "🟢", points: 15600, value: "$78", trend: "+18%", color: "#007A3D", category: "retail" },
-  { name: "CommBank Awards", logo: "💳", points: 67300, value: "$336", trend: "+7%", color: "#FFCC00", category: "banking" },
+const navy = "#1A3A5F";
+const amber = "#F59E0B";
+
+// ── SCHEME DATA ───────────────────────────────────────────────────────────────
+const CATS = [
+  {
+    id: "airline", label: "Airlines & Flying", emoji: "✈️",
+    q: "How many bonus frequent flyer points would convince you to switch your main airline loyalty program?",
+    range: [0, 350000], step: 5000,
+    schemes: [
+      { id: "qff",      name: "Qantas Frequent Flyer",    abbr: "QFF",   bg: "#E31837", icon: "✈" },
+      { id: "vff",      name: "Velocity Frequent Flyer",  abbr: "VFF",   bg: "#E55A00", icon: "✈" },
+      { id: "kf",       name: "Singapore KrisFlyer",      abbr: "KF",    bg: "#003087", icon: "✈" },
+      { id: "cathay",   name: "Cathay (Asia Miles)",      abbr: "CX",    bg: "#006564", icon: "✈" },
+      { id: "skywards", name: "Emirates Skywards",        abbr: "EK",    bg: "#B71C1C", icon: "✈" },
+      { id: "airpoints",name: "Air NZ Airpoints",         abbr: "NZ",    bg: "#24185E", icon: "✈" },
+      { id: "enrich",   name: "Malaysia Enrich",          abbr: "MH",    bg: "#CC0000", icon: "✈" },
+      { id: "rop",      name: "Thai Royal Orchid Plus",   abbr: "TG",    bg: "#522D80", icon: "✈" },
+      { id: "ana",      name: "ANA Mileage Club",         abbr: "ANA",   bg: "#0F4BA0", icon: "✈" },
+      { id: "jal",      name: "JAL Mileage Bank",         abbr: "JAL",   bg: "#C8002A", icon: "✈" },
+      { id: "qatar",    name: "Qatar Privilege Club",     abbr: "QR",    bg: "#5C0632", icon: "✈" },
+      { id: "etihad",   name: "Etihad Guest",             abbr: "EY",    bg: "#8B6914", icon: "✈" },
+    ],
+  },
+  {
+    id: "super", label: "Supermarkets & Food", emoji: "🛒",
+    q: "How many bonus points would convince you to switch your main supermarket or food rewards program?",
+    range: [0, 50000], step: 500,
+    schemes: [
+      { id: "flybuys",   name: "Flybuys (Coles)",          abbr: "FB",   bg: "#CC1F1F", icon: "🛒" },
+      { id: "edr",       name: "Everyday Rewards",         abbr: "EDR",  bg: "#166534", icon: "🛒" },
+      { id: "mydans",    name: "My Dan's",                 abbr: "DM",   bg: "#C8900A", icon: "🍾" },
+      { id: "mymaccas",  name: "MyMacca's Rewards",        abbr: "MCD",  bg: "#DA291C", icon: "🍟" },
+      { id: "subway",    name: "Subway MyWay",             abbr: "SUB",  bg: "#007337", icon: "🥖" },
+      { id: "coffeeclub",name: "The Coffee Club VIP",      abbr: "TCC",  bg: "#5C3317", icon: "☕" },
+      { id: "boost",     name: "Boost Juice Vibe Club",    abbr: "BST",  bg: "#E03A3C", icon: "🥤" },
+      { id: "grilld",    name: "Grill'd Relish",           abbr: "GRD",  bg: "#3D6B47", icon: "🍔" },
+      { id: "deliveroo", name: "Deliveroo Plus",           abbr: "DEL",  bg: "#00CCBC", fgDark: true, icon: "🛵" },
+      { id: "menulog",   name: "Menulog Rewards",          abbr: "ML",   bg: "#EF6B25", icon: "🛵" },
+      { id: "dominos",   name: "Domino's",                 abbr: "DOM",  bg: "#006491", icon: "🍕" },
+      { id: "nandos",    name: "Nando's Rewards",          abbr: "NAN",  bg: "#CC2021", icon: "🍗" },
+    ],
+  },
+  {
+    id: "banking", label: "Credit Cards & Banking", emoji: "💳",
+    q: "How many bonus points would convince you to switch your main credit card rewards program?",
+    range: [0, 200000], step: 5000,
+    schemes: [
+      { id: "amexmr",   name: "Amex Membership Rewards",  abbr: "AMEX", bg: "#2E77BC", icon: "💳" },
+      { id: "cba",      name: "CommBank Awards",          abbr: "CBA",  bg: "#F4A11D", fgDark: true, icon: "💳" },
+      { id: "anz",      name: "ANZ Rewards",              abbr: "ANZ",  bg: "#007CC3", icon: "💳" },
+      { id: "nab",      name: "NAB Rewards",              abbr: "NAB",  bg: "#CC0000", icon: "💳" },
+      { id: "westpac",  name: "Westpac Altitude",         abbr: "WBC",  bg: "#D5002B", icon: "💳" },
+      { id: "stgeorge", name: "St.George Amplify",        abbr: "STG",  bg: "#009B77", icon: "💳" },
+      { id: "citi",     name: "Citi Rewards",             abbr: "CITI", bg: "#056DAE", icon: "💳" },
+      { id: "latitude", name: "Latitude Rewards",         abbr: "LAT",  bg: "#00A8A8", icon: "💳" },
+      { id: "hsbc",     name: "HSBC Rewards Plus",        abbr: "HSBC", bg: "#DB0011", icon: "💳" },
+      { id: "macquarie",name: "Macquarie Rewards",        abbr: "MQG",  bg: "#1B3A6B", icon: "💳" },
+      { id: "bom",      name: "Bank of Melbourne",        abbr: "BOM",  bg: "#5B2A86", icon: "💳" },
+      { id: "virgin",   name: "Virgin Money Rewards",     abbr: "VM",   bg: "#CC1133", icon: "💳" },
+    ],
+  },
+  {
+    id: "hotel", label: "Hotels & Accommodation", emoji: "🏨",
+    q: "How many bonus hotel points would convince you to switch your main hotel loyalty program?",
+    range: [0, 150000], step: 5000,
+    schemes: [
+      { id: "bonvoy",   name: "Marriott Bonvoy",           abbr: "MBV", bg: "#800020", icon: "🏨" },
+      { id: "hilton",   name: "Hilton Honors",             abbr: "HH",  bg: "#003082", icon: "🏨" },
+      { id: "ihg",      name: "IHG One Rewards",           abbr: "IHG", bg: "#004B8D", icon: "🏨" },
+      { id: "accor",    name: "Accor Live Limitless",      abbr: "ALL", bg: "#8B0046", icon: "🏨" },
+      { id: "hyatt",    name: "World of Hyatt",            abbr: "WOH", bg: "#2D2D2D", icon: "🏨" },
+      { id: "radisson", name: "Radisson Rewards",          abbr: "RAD", bg: "#9B1B30", icon: "🏨" },
+      { id: "gha",      name: "GHA Discovery",             abbr: "GHA", bg: "#1B4D3E", icon: "🏨" },
+      { id: "pge",      name: "Priority Guest (QT/Rydges)",abbr: "PGR", bg: "#2D2D2D", icon: "🏨" },
+      { id: "wyndham",  name: "Wyndham Rewards",           abbr: "WYN", bg: "#003F87", icon: "🏨" },
+      { id: "bestwest", name: "Best Western Rewards",      abbr: "BWR", bg: "#003E8A", icon: "🏨" },
+      { id: "shangri",  name: "Shangri-La Circle",         abbr: "SLC", bg: "#7B5E22", icon: "🏨" },
+      { id: "luxesc",   name: "Luxury Escapes",            abbr: "LXE", bg: "#1A3A5F", icon: "🏖" },
+    ],
+  },
+  {
+    id: "fuel", label: "Fuel, Transport & Telco", emoji: "⛽",
+    q: "How many bonus points would convince you to switch your fuel or telco rewards program?",
+    range: [0, 20000], step: 250,
+    schemes: [
+      { id: "bp",      name: "BP Rewards",              abbr: "BP",   bg: "#007A33", icon: "⛽" },
+      { id: "ampol",   name: "Ampol Everyday",          abbr: "AMP",  bg: "#CC0000", icon: "⛽" },
+      { id: "shell",   name: "Shell Coles Express",     abbr: "SHL",  bg: "#DD1D21", icon: "⛽" },
+      { id: "sev",     name: "7-Eleven Velocity",       abbr: "7EL",  bg: "#F07800", icon: "⛽" },
+      { id: "caltex",  name: "Caltex Rewards",          abbr: "CTX",  bg: "#8B1A1A", icon: "⛽" },
+      { id: "nrma",    name: "NRMA Member Benefits",    abbr: "NRMA", bg: "#002D62", icon: "🚗" },
+      { id: "racv",    name: "RACV Member Benefits",    abbr: "RACV", bg: "#003DA5", icon: "🚗" },
+      { id: "telstra", name: "Telstra Plus",            abbr: "TEL",  bg: "#5C068C", icon: "📱" },
+      { id: "optus",   name: "Optus Perks",             abbr: "OPT",  bg: "#E60078", icon: "📱" },
+      { id: "racq",    name: "RACQ Member Benefits",    abbr: "RACQ", bg: "#C8102E", icon: "🚗" },
+    ],
+  },
+  {
+    id: "retail", label: "Retail, Beauty & Lifestyle", emoji: "🏪",
+    q: "How many bonus points would convince you to switch your main retail loyalty program?",
+    range: [0, 50000], step: 500,
+    schemes: [
+      { id: "myer",     name: "Myer One",                abbr: "M1",   bg: "#9F1239", icon: "🛍" },
+      { id: "dj",       name: "David Jones",             abbr: "DJ",   bg: "#111827", icon: "🛍" },
+      { id: "priceline",name: "Priceline Sister Club",   abbr: "PSC",  bg: "#BE185D", icon: "💊" },
+      { id: "mecca",    name: "MECCA Beauty Loop",       abbr: "MCA",  bg: "#1B4D3E", icon: "💄" },
+      { id: "jbhifi",   name: "JB Hi-Fi Perks",          abbr: "JBH",  bg: "#FFCC00", fgDark: true, icon: "🎵" },
+      { id: "amazon",   name: "Amazon Prime",            abbr: "AMZN", bg: "#FF9900", fgDark: true, icon: "📦" },
+      { id: "ebay",     name: "eBay Plus",               abbr: "EBAY", bg: "#003087", icon: "🛍" },
+      { id: "bunnings", name: "Bunnings PowerPass",      abbr: "BUN",  bg: "#00612C", icon: "🔧" },
+      { id: "chemist",  name: "Chemist Warehouse",       abbr: "CWH",  bg: "#CC1F1F", icon: "💊" },
+      { id: "adore",    name: "Adore Beauty",            abbr: "ADR",  bg: "#C71585", icon: "💄" },
+      { id: "iconic",   name: "THE ICONIC",              abbr: "TIC",  bg: "#1A1A1A", icon: "👗" },
+      { id: "cotton",   name: "Cotton On",               abbr: "COT",  bg: "#8B1A1A", icon: "👕" },
+      { id: "lornajane",name: "Lorna Jane Active Living",abbr: "LJA",  bg: "#6D2C91", icon: "🏃" },
+      { id: "rebel",    name: "Rebel Sport",             abbr: "RBL",  bg: "#CC1133", icon: "⚽" },
+      { id: "onepass",  name: "OnePass (Wesfarmers)",    abbr: "1PS",  bg: "#003A5C", icon: "🔑" },
+      { id: "medibank", name: "Medibank Live Better",    abbr: "MBK",  bg: "#00527F", icon: "❤️" },
+      { id: "nib",      name: "nib Rewards",             abbr: "NIB",  bg: "#E31837", icon: "❤️" },
+      { id: "shopback", name: "ShopBack",                abbr: "SHB",  bg: "#EE4D2D", icon: "💰" },
+    ],
+  },
 ];
 
-const OPPORTUNITIES = [
-  {
-    type: "SWITCH",
-    urgency: "HOT",
-    title: "ANZ Rewards Black → Qantas",
-    desc: "Earn 150,000 bonus Qantas Points on sign-up — worth $3,000 in flights. Your spending profile means you'd hit the $6k spend hurdle in 3 months.",
-    value: "$3,000",
-    expires: "14 days",
-    match: 97,
-    tag: "Card Switch",
-  },
-  {
-    type: "EARN",
-    urgency: "NEW",
-    title: "Everyday Rewards Triple Points",
-    desc: "Woolworths is running triple points on all purchases this weekend — based on your average weekly spend of $340, you'd net ~1,020 bonus points.",
-    value: "$5.10",
-    expires: "3 days",
-    match: 91,
-    tag: "Supermarket",
-  },
-  {
-    type: "SWITCH",
-    urgency: "EXPIRING",
-    title: "Optus → Telstra (via Qantas)",
-    desc: "Telstra is offering 100,000 Qantas Points for new mobile plan sign-ups (24-month). Your current Optus contract ends in 6 weeks — perfect timing.",
-    value: "$2,000",
-    expires: "28 days",
-    match: 88,
-    tag: "Telco Switch",
-  },
-  {
-    type: "EARN",
-    urgency: "NEW",
-    title: "Velocity + Priceline Partner Boost",
-    desc: "Velocity has launched a 5x earn rate at Priceline Pharmacy this month. You've shopped there 3x in the last 90 days — high probability of benefit.",
-    value: "$31",
-    expires: "18 days",
-    match: 84,
-    tag: "Pharmacy",
-  },
-];
+const ALL_SCHEMES = CATS.flatMap(c => c.schemes.map(s => ({ ...s, catId: c.id })));
+const fmtPts = v => v >= 1000 ? `${(v / 1000).toFixed(0)}K` : `${v}`;
 
-const TIERS = [
-  {
-    name: "Reader",
-    price: "Free",
-    features: [
-      "Track up to 3 schemes",
-      "Weekly digest email",
-      "Book chapter summaries",
-      "Basic point calculator",
-    ],
-    cta: "Start Free",
-    accent: "#8B9E77",
-  },
-  {
-    name: "Optimiser",
-    price: "$9.90/mo",
-    features: [
-      "Unlimited scheme tracking",
-      "AI opportunity matching",
-      "Personalised alerts",
-      "Switching value calculator",
-      "Priority email offers",
-      "Partner discounts",
-    ],
-    cta: "Most Popular",
-    accent: "#C9A84C",
-    highlight: true,
-  },
-  {
-    name: "Edge",
-    price: "$24.90/mo",
-    features: [
-      "Everything in Optimiser",
-      "1:1 strategy session/quarter",
-      "Advance deal access (48hr)",
-      "Churning calendar & tracker",
-      "Tax & valuation guidance",
-      "White-glove onboarding",
-    ],
-    cta: "Go Premium",
-    accent: "#4A7FA5",
-  },
-];
+// ── GLOBAL CSS ────────────────────────────────────────────────────────────────
+const CSS = `
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
+  body { background: #F8F7F4; }
+  .ps-in { animation: psIn 0.28s cubic-bezier(0.22,1,0.36,1) both; }
+  @keyframes psIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+  .ps-input {
+    width: 100%; padding: 13px 15px;
+    border: 1.5px solid #E5E7EB; border-radius: 10px;
+    font-size: 16px; color: #111827; background: white; outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    font-family: 'Outfit', sans-serif;
+  }
+  .ps-input:focus { border-color: ${navy}; box-shadow: 0 0 0 3px rgba(26,58,95,0.1); }
+  .ps-input.err { border-color: #EF4444; }
+  .ps-slider {
+    -webkit-appearance: none; appearance: none;
+    width: 100%; height: 7px; border-radius: 4px;
+    outline: none; cursor: pointer; display: block;
+    background: linear-gradient(to right, ${navy} 0%, ${amber} var(--p,25%), #E5E7EB var(--p,25%), #E5E7EB 100%);
+  }
+  .ps-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: ${navy}; border: 3px solid white;
+    box-shadow: 0 3px 12px rgba(26,58,95,0.35); cursor: pointer;
+    transition: transform 0.1s;
+  }
+  .ps-slider:active::-webkit-slider-thumb { transform: scale(1.2); }
+  .ps-slider::-moz-range-thumb {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: ${navy}; border: 3px solid white; cursor: pointer;
+  }
+  .ps-pri { transition: filter 0.15s, transform 0.1s; }
+  .ps-pri:hover { filter: brightness(1.08); }
+  .ps-pri:active { transform: scale(0.98); }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 2px; }
+`;
 
-const NAV_ITEMS = ["Dashboard", "Opportunities", "My Schemes", "Insights", "Community"];
+// ── STATIC SUB-COMPONENTS (defined outside App to avoid re-mounting) ──────────
 
-function AnimatedCounter({ target, duration = 1500, prefix = "", suffix = "" }) {
-  const [count, setCount] = useState(0);
-  const ref = useRef(null);
-  const started = useRef(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting && !started.current) {
-          started.current = true;
-          let start = 0;
-          const step = target / (duration / 16);
-          const timer = setInterval(() => {
-            start += step;
-            if (start >= target) {
-              setCount(target);
-              clearInterval(timer);
-            } else {
-              setCount(Math.floor(start));
-            }
-          }, 16);
-        }
-      },
-      { threshold: 0.5 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [target, duration]);
-
+function SchemeTile({ s, on, toggle }) {
+  const tc = s.fgDark ? "#1a1a1a" : "#fff";
   return (
-    <span ref={ref}>
-      {prefix}{count.toLocaleString()}{suffix}
-    </span>
-  );
-}
-
-function SchemeCard({ scheme, index }) {
-  const [hover, setHover] = useState(false);
-  return (
-    <div
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      style={{
-        background: hover ? "rgba(201,168,76,0.08)" : "rgba(255,255,255,0.03)",
-        border: `1px solid ${hover ? "rgba(201,168,76,0.4)" : "rgba(255,255,255,0.08)"}`,
-        borderRadius: 12,
-        padding: "18px 20px",
-        display: "flex",
-        alignItems: "center",
-        gap: 16,
-        cursor: "pointer",
-        transition: "all 0.25s ease",
-      }}
-    >
-      <div style={{ fontSize: 26, width: 36, textAlign: "center" }}>{scheme.logo}</div>
-      <div style={{ flex: 1 }}>
-        <div style={{ fontFamily: "'Crimson Pro', Georgia, serif", fontSize: 14, color: "#E8E4D9", fontWeight: 600 }}>
-          {scheme.name}
-        </div>
-        <div style={{ fontSize: 11, color: "#8B8070", marginTop: 2, fontFamily: "monospace", letterSpacing: "0.03em" }}>
-          {scheme.points.toLocaleString()} pts
-        </div>
-      </div>
-      <div style={{ textAlign: "right" }}>
-        <div style={{ fontFamily: "'Crimson Pro', Georgia, serif", fontSize: 17, color: "#C9A84C", fontWeight: 700 }}>
-          {scheme.value}
-        </div>
-        <div style={{ fontSize: 10, color: scheme.trend.startsWith("+") ? "#8B9E77" : "#C07070", fontFamily: "monospace" }}>
-          {scheme.trend} this month
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function OpportunityCard({ opp }) {
-  const [hover, setHover] = useState(false);
-  const urgencyColors = { HOT: "#E85D3A", NEW: "#4A9E7F", EXPIRING: "#C9A84C" };
-  return (
-    <div
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      style={{
-        background: hover ? "rgba(201,168,76,0.06)" : "rgba(255,255,255,0.025)",
-        border: `1px solid ${hover ? "rgba(201,168,76,0.35)" : "rgba(255,255,255,0.07)"}`,
-        borderRadius: 14,
-        padding: "22px 24px",
-        cursor: "pointer",
-        transition: "all 0.3s ease",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: urgencyColors[opp.urgency] || "#C9A84C", opacity: 0.7 }} />
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <span style={{
-            fontSize: 10, fontFamily: "monospace", letterSpacing: "0.1em", fontWeight: 700,
-            color: urgencyColors[opp.urgency], border: `1px solid ${urgencyColors[opp.urgency]}`,
-            padding: "2px 7px", borderRadius: 4,
-          }}>{opp.urgency}</span>
-          <span style={{
-            fontSize: 10, fontFamily: "monospace", letterSpacing: "0.08em",
-            color: "#8B8070", border: "1px solid rgba(139,128,112,0.3)",
-            padding: "2px 7px", borderRadius: 4,
-          }}>{opp.tag}</span>
-        </div>
-        <div style={{ textAlign: "right" }}>
-          <div style={{ fontFamily: "'Crimson Pro', Georgia, serif", fontSize: 20, color: "#C9A84C", fontWeight: 700 }}>{opp.value}</div>
-          <div style={{ fontSize: 10, color: "#8B8070", fontFamily: "monospace" }}>est. value</div>
-        </div>
-      </div>
-      <div style={{ fontFamily: "'Crimson Pro', Georgia, serif", fontSize: 17, color: "#E8E4D9", fontWeight: 600, marginBottom: 8, lineHeight: 1.3 }}>{opp.title}</div>
-      <div style={{ fontSize: 13, color: "#9B9080", lineHeight: 1.6, marginBottom: 14 }}>{opp.desc}</div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <div style={{ fontSize: 11, color: "#8B8070", fontFamily: "monospace" }}>⏱ Expires in {opp.expires}</div>
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <div style={{ fontSize: 11, color: "#8B8070" }}>Match</div>
-          <div style={{
-            background: "rgba(201,168,76,0.15)", border: "1px solid rgba(201,168,76,0.3)",
-            borderRadius: 20, padding: "2px 10px",
-            fontFamily: "monospace", fontSize: 12, color: "#C9A84C", fontWeight: 700,
-          }}>{opp.match}%</div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function TierCard({ tier }) {
-  const [hover, setHover] = useState(false);
-  return (
-    <div
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      style={{
-        background: tier.highlight ? "rgba(201,168,76,0.08)" : hover ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.02)",
-        border: `1px solid ${tier.highlight ? "rgba(201,168,76,0.4)" : hover ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.08)"}`,
-        borderRadius: 16,
-        padding: "32px 28px",
-        position: "relative",
-        transform: tier.highlight ? "scale(1.03)" : "scale(1)",
-        transition: "all 0.3s ease",
-      }}
-    >
-      {tier.highlight && (
+    <button onClick={() => toggle(s.id)} style={{
+      position: "relative", width: "100%", minHeight: 76,
+      background: on ? s.bg : "#F3F4F6",
+      border: `2px solid ${on ? s.bg : "#E5E7EB"}`,
+      borderRadius: 12, padding: "7px 4px", cursor: "pointer",
+      transition: "all 0.15s ease", display: "flex", flexDirection: "column",
+      alignItems: "center", justifyContent: "center", gap: 3,
+      boxShadow: on ? `0 4px 12px ${s.bg}55` : "none",
+      transform: on ? "scale(1.04)" : "scale(1)",
+    }}>
+      {on && (
         <div style={{
-          position: "absolute", top: -13, left: "50%", transform: "translateX(-50%)",
-          background: "#C9A84C", color: "#0D0B07", fontSize: 10, fontFamily: "monospace",
-          letterSpacing: "0.12em", fontWeight: 800, padding: "4px 16px", borderRadius: 20,
-          whiteSpace: "nowrap",
-        }}>MOST POPULAR</div>
+          position: "absolute", top: 3, right: 3, width: 15, height: 15,
+          borderRadius: "50%", background: s.fgDark ? "rgba(0,0,0,0.15)" : "rgba(255,255,255,0.92)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+        }}>
+          <svg width="8" height="6" viewBox="0 0 10 8" fill="none">
+            <path d="M1 4L3.5 6.5L9 1" stroke={on ? (s.fgDark ? "#fff" : s.bg) : "#999"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
       )}
-      <div style={{ fontFamily: "'Crimson Pro', Georgia, serif", fontSize: 13, color: tier.accent, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 6 }}>{tier.name}</div>
-      <div style={{ fontFamily: "'Crimson Pro', Georgia, serif", fontSize: 32, color: "#E8E4D9", fontWeight: 700, marginBottom: 4 }}>{tier.price}</div>
-      <div style={{ width: 40, height: 1, background: tier.accent, opacity: 0.5, marginBottom: 24 }} />
-      <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 32 }}>
-        {tier.features.map((f, i) => (
-          <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-            <span style={{ color: tier.accent, fontSize: 12, marginTop: 2, flexShrink: 0 }}>◆</span>
-            <span style={{ fontSize: 13, color: "#A09080", lineHeight: 1.4 }}>{f}</span>
+      <span style={{ fontSize: 15, lineHeight: 1 }}>{s.icon}</span>
+      <span style={{ fontFamily: "monospace", fontWeight: 700, fontSize: 10.5, color: on ? tc : "#374151", letterSpacing: "0.04em", lineHeight: 1.1 }}>{s.abbr}</span>
+      <span style={{ fontSize: 8, color: on ? (s.fgDark ? "rgba(0,0,0,0.6)" : "rgba(255,255,255,0.8)") : "#9CA3AF", textAlign: "center", lineHeight: 1.2, paddingLeft: 1, paddingRight: 1 }}>{s.name}</span>
+    </button>
+  );
+}
+
+function RankTile({ s, rank, toggle, locked }) {
+  const ranked = rank !== null;
+  const tc = s.fgDark ? "#1a1a1a" : "#fff";
+  return (
+    <button onClick={() => (!locked || ranked) && toggle(s.id)} style={{
+      position: "relative", width: "100%", minHeight: 88,
+      background: ranked ? s.bg : locked ? "#FAFAFA" : "#F3F4F6",
+      border: `2px solid ${ranked ? s.bg : locked ? "#F3F4F6" : "#E5E7EB"}`,
+      borderRadius: 14, padding: "12px 8px",
+      cursor: locked && !ranked ? "not-allowed" : "pointer",
+      opacity: locked && !ranked ? 0.4 : 1, transition: "all 0.15s ease",
+      display: "flex", flexDirection: "column", alignItems: "center",
+      justifyContent: "center", gap: 4,
+      boxShadow: ranked ? `0 4px 16px ${s.bg}55` : "none",
+      transform: ranked ? "scale(1.02)" : "scale(1)",
+    }}>
+      {ranked && (
+        <div style={{
+          position: "absolute", top: -10, right: -10, width: 25, height: 25,
+          borderRadius: "50%", background: amber, border: "2px solid white",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontWeight: 900, fontSize: 11, color: navy,
+          boxShadow: "0 2px 8px rgba(245,158,11,0.4)",
+        }}>#{rank}</div>
+      )}
+      <span style={{ fontSize: 18, lineHeight: 1 }}>{s.icon}</span>
+      <span style={{ fontFamily: "monospace", fontWeight: 700, fontSize: 12, color: ranked ? tc : "#374151", letterSpacing: "0.04em" }}>{s.abbr}</span>
+      <span style={{ fontSize: 9.5, color: ranked ? (s.fgDark ? "rgba(0,0,0,0.6)" : "rgba(255,255,255,0.8)") : "#6B7280", textAlign: "center", lineHeight: 1.3 }}>{s.name}</span>
+    </button>
+  );
+}
+
+function Shell({ step, done, children, footer }) {
+  const stepLabels = ["Your details", "Your schemes", "Your top 5", "Switching thresholds"];
+  return (
+    <div style={{ background: "#F8F7F4", display: "flex", justifyContent: "center", minHeight: "100vh" }}>
+      <div style={{ width: "100%", maxWidth: 440, background: "white", display: "flex", flexDirection: "column", boxShadow: "0 0 60px rgba(0,0,0,0.07)", minHeight: "100vh" }}>
+        {/* Header */}
+        <div style={{ padding: "16px 20px 13px", borderBottom: "1px solid #F3F4F6", flexShrink: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 2 }}>
+            <div style={{ fontWeight: 900, fontSize: 23, lineHeight: 1, letterSpacing: "-0.02em" }}>
+              <span style={{ color: navy }}>Points</span><span style={{ color: amber }}>Store</span>
+            </div>
+            {/* ICG logo */}
+            <div style={{
+              background: "#3B5A8A", borderRadius: 5,
+              height: 28, padding: "0 10px",
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}>
+              <span style={{ color: "white", fontWeight: 800, fontSize: 14, letterSpacing: "0.06em", lineHeight: 1 }}>ICG</span>
+            </div>
           </div>
-        ))}
+          <div style={{ fontFamily: "monospace", fontSize: 8.5, letterSpacing: "0.16em", textTransform: "uppercase", marginBottom: !done ? 12 : 0 }}>
+            <span style={{ color: "#3B82F6" }}>learn</span><span style={{ color: "#9CA3AF" }}> · </span>
+            <span style={{ color: "#059669" }}>earn</span><span style={{ color: "#9CA3AF" }}> · </span>
+            <span style={{ color: amber }}>burn</span>
+          </div>
+          {!done && (
+            <>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
+                <span style={{ fontSize: 10.5, color: "#9CA3AF", fontWeight: 600 }}>Step {step} of 4</span>
+                <span style={{ fontSize: 10.5, color: "#6B7280", fontWeight: 600 }}>{stepLabels[step - 1]}</span>
+              </div>
+              <div style={{ height: 4, background: "#F3F4F6", borderRadius: 2, overflow: "hidden" }}>
+                <div style={{ height: "100%", borderRadius: 2, background: `linear-gradient(90deg, ${navy}, ${amber})`, width: `${(step / 4) * 100}%`, transition: "width 0.4s cubic-bezier(0.22,1,0.36,1)" }} />
+              </div>
+            </>
+          )}
+        </div>
+        {/* Scrollable body */}
+        <div style={{ flex: 1, overflowY: "auto", padding: "18px 18px 8px" }}>
+          {children}
+        </div>
+        {/* Sticky footer */}
+        {footer && (
+          <div style={{ padding: "10px 18px 26px", borderTop: "1px solid #F3F4F6", background: "white", flexShrink: 0 }}>
+            {footer}
+          </div>
+        )}
       </div>
-      <button style={{
-        width: "100%", padding: "13px 0",
-        background: tier.highlight ? "#C9A84C" : "transparent",
-        border: `1px solid ${tier.accent}`,
-        borderRadius: 8, color: tier.highlight ? "#0D0B07" : tier.accent,
-        fontFamily: "monospace", fontSize: 12, letterSpacing: "0.1em",
-        fontWeight: 700, cursor: "pointer",
-        transition: "all 0.2s ease",
-        textTransform: "uppercase",
-      }}>{tier.cta}</button>
     </div>
   );
 }
+
+function PBtn({ label, onClick, disabled, grad }) {
+  return (
+    <button onClick={onClick} disabled={disabled} className="ps-pri" style={{
+      width: "100%", padding: "14px",
+      background: grad ? `linear-gradient(135deg, ${navy}, #2C5282)` : disabled ? "#E5E7EB" : navy,
+      color: disabled ? "#9CA3AF" : "white", border: "none", borderRadius: 12,
+      fontSize: 14, fontWeight: 700, cursor: disabled ? "not-allowed" : "pointer",
+      boxShadow: grad ? "0 4px 18px rgba(26,58,95,0.3)" : "none",
+    }}>{label}</button>
+  );
+}
+
+function SBtn({ label, onClick }) {
+  return (
+    <button onClick={onClick} style={{ width: "100%", padding: "9px", background: "transparent", color: "#6B7280", border: "none", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+      {label}
+    </button>
+  );
+}
+
+function Badge({ children, bg = "#EFF6FF", color = "#1D4ED8" }) {
+  return (
+    <div style={{ background: bg, borderRadius: 8, padding: "7px 12px", fontSize: 12.5, fontWeight: 600, color, marginBottom: 11 }}>
+      {children}
+    </div>
+  );
+}
+
+function H({ t, sub }) {
+  return (
+    <div style={{ marginBottom: 16 }}>
+      <h1 style={{ fontSize: 19, fontWeight: 800, color: "#111827", lineHeight: 1.2, marginBottom: 4 }}>{t}</h1>
+      {sub && <p style={{ fontSize: 12.5, color: "#6B7280", lineHeight: 1.6 }}>{sub}</p>}
+    </div>
+  );
+}
+
+// ── MAIN APP ──────────────────────────────────────────────────────────────────
 
 export default function App() {
-  const [activeNav, setActiveNav] = useState("Dashboard");
+  const [step, setStep] = useState(1);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [errors, setErrors] = useState({});
+  const [selected, setSelected] = useState(new Set());
+  const [topFive, setTopFive] = useState([]);
+  const [thresholds, setThresholds] = useState({});
+  const [done, setDone] = useState(false);
 
-  const s = {
-    root: {
-      background: "#0D0B07",
-      minHeight: "100vh",
-      fontFamily: "'Crimson Pro', Georgia, serif",
-      color: "#E8E4D9",
-      overflowX: "hidden",
-    },
-    nav: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      padding: "20px 48px",
-      borderBottom: "1px solid rgba(255,255,255,0.06)",
-      position: "sticky",
-      top: 0,
-      background: "rgba(13,11,7,0.96)",
-      backdropFilter: "blur(12px)",
-      zIndex: 100,
-    },
-    logo: {
-      fontFamily: "'Crimson Pro', Georgia, serif",
-      fontSize: 20,
-      fontWeight: 800,
-      letterSpacing: "-0.01em",
-      color: "#E8E4D9",
-      display: "flex",
-      alignItems: "center",
-      gap: 8,
-    },
-    section: { padding: "64px 48px", maxWidth: 1200, margin: "0 auto" },
-    sectionLabel: {
-      fontFamily: "monospace",
-      fontSize: 10,
-      letterSpacing: "0.18em",
-      color: "#C9A84C",
-      textTransform: "uppercase",
-      marginBottom: 12,
-    },
-    sectionTitle: {
-      fontFamily: "'Crimson Pro', Georgia, serif",
-      fontSize: 36,
-      fontWeight: 700,
-      color: "#E8E4D9",
-      marginBottom: 8,
-      lineHeight: 1.15,
-    },
-    divider: {
-      height: 1,
-      background: "linear-gradient(90deg, transparent, rgba(201,168,76,0.2), transparent)",
-      margin: "0 48px",
-    },
+  const selectedArr = Array.from(selected);
+  const selectedObjs = selectedArr.map(id => ALL_SCHEMES.find(s => s.id === id)).filter(Boolean);
+  const selectedCats = CATS.filter(c => c.schemes.some(s => selected.has(s.id)));
+  const need5 = Math.min(5, selectedArr.length);
+
+  const toggleScheme = id => {
+    setSelected(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) { next.delete(id); setTopFive(t => t.filter(x => x !== id)); }
+      else next.add(id);
+      return next;
+    });
   };
 
-  return (
-    <div style={s.root}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap');
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: #0D0B07; }
-        ::-webkit-scrollbar { width: 6px; background: #0D0B07; }
-        ::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.25); border-radius: 3px; }
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(24px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes agentPulse {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(201,168,76,0.4); }
-          50% { box-shadow: 0 0 0 8px rgba(201,168,76,0); }
-        }
-        .fade-up { animation: fadeUp 0.65s ease both; }
-        .agent-dot { animation: agentPulse 2.5s ease infinite; }
-        .nav-item { transition: color 0.2s, border-color 0.2s; }
-        .nav-item:hover { color: #C9A84C !important; }
-      `}</style>
-
-      {/* ── NAV ── */}
-      <nav style={s.nav}>
-        <div style={s.logo}>
-          {/* Agent dot */}
-          <div className="agent-dot" style={{
-            width: 10, height: 10, borderRadius: "50%",
-            background: "#C9A84C", flexShrink: 0,
-          }} />
-          loyalty<span style={{ color: "#C9A84C" }}>agent</span><span style={{ color: "#6B6050", fontSize: 17, fontWeight: 400, letterSpacing: 0 }}>.ai</span>
-        </div>
-
-        <ul style={{ display: "flex", gap: 32, listStyle: "none" }}>
-          {NAV_ITEMS.map(n => (
-            <li
-              key={n}
-              className="nav-item"
-              onClick={() => setActiveNav(n)}
-              style={{
-                fontSize: 12, fontFamily: "monospace", letterSpacing: "0.06em",
-                cursor: "pointer",
-                color: activeNav === n ? "#C9A84C" : "#8B8070",
-                borderBottom: activeNav === n ? "1px solid #C9A84C" : "1px solid transparent",
-                paddingBottom: 2,
-              }}
-            >{n}</li>
-          ))}
-        </ul>
-
-        <div style={{ display: "flex", gap: 10 }}>
-          <button style={{ padding: "8px 18px", background: "transparent", border: "1px solid rgba(139,128,112,0.35)", borderRadius: 6, color: "#8B8070", fontFamily: "monospace", fontSize: 11, cursor: "pointer", letterSpacing: "0.08em" }}>
-            LOG IN
-          </button>
-          <button style={{ padding: "8px 20px", background: "#C9A84C", border: "none", borderRadius: 6, color: "#0D0B07", fontFamily: "monospace", fontSize: 11, cursor: "pointer", fontWeight: 800, letterSpacing: "0.08em" }}>
-            GET STARTED
-          </button>
-        </div>
-      </nav>
-
-      {/* ── HERO ── */}
-      <div style={{ padding: "80px 48px 60px", maxWidth: 1200, margin: "0 auto" }}>
-        <div className="fade-up" style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 28 }}>
-          <div style={{ width: 32, height: 1, background: "#C9A84C" }} />
-          <span style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.18em", color: "#C9A84C", textTransform: "uppercase" }}>
-            Companion to Australia's Points Economy · AI-Powered
-          </span>
-        </div>
-
-        <h1 className="fade-up" style={{ animationDelay: "0.1s", fontFamily: "'Crimson Pro', Georgia, serif", fontSize: 64, fontWeight: 800, lineHeight: 1.04, color: "#E8E4D9", maxWidth: 660, marginBottom: 22 }}>
-          Your points are worth more than you
-          <span style={{ color: "#C9A84C", fontStyle: "italic" }}> think.</span>
-        </h1>
-
-        <p className="fade-up" style={{ animationDelay: "0.2s", fontSize: 18, color: "#9B9080", maxWidth: 520, lineHeight: 1.7, marginBottom: 36 }}>
-          The intelligent platform for loyalty optimisation — powered by agents that research, match and alert you to opportunities while you sleep.
-        </p>
-
-        <div className="fade-up" style={{ animationDelay: "0.3s", display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
-          <button style={{ padding: "14px 32px", background: "#C9A84C", border: "none", borderRadius: 8, color: "#0D0B07", fontFamily: "monospace", fontSize: 12, cursor: "pointer", fontWeight: 800, letterSpacing: "0.1em" }}>
-            CONNECT YOUR SCHEMES →
-          </button>
-          <span style={{ fontFamily: "monospace", fontSize: 11, color: "#6B6050", letterSpacing: "0.06em" }}>
-            Free to start · No credit card required
-          </span>
-        </div>
-
-        {/* Stats bar */}
-        <div className="fade-up" style={{
-          animationDelay: "0.5s",
-          display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
-          marginTop: 64, border: "1px solid rgba(255,255,255,0.07)",
-          borderRadius: 14, overflow: "hidden", background: "rgba(255,255,255,0.02)",
-        }}>
-          {[
-            { label: "Members", val: 47200, suffix: "+" },
-            { label: "Points Tracked", val: 2400000000, suffix: "+" },
-            { label: "Avg. Annual Saving", val: 890, prefix: "$" },
-            { label: "Opportunities Matched", val: 180000, suffix: "+" },
-          ].map((stat, i) => (
-            <div key={i} style={{ padding: "24px 28px", borderRight: i < 3 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
-              <div style={{ fontFamily: "'Crimson Pro', Georgia, serif", fontSize: 28, fontWeight: 700, color: "#C9A84C" }}>
-                <AnimatedCounter target={stat.val} prefix={stat.prefix || ""} suffix={stat.suffix || ""} />
-              </div>
-              <div style={{ fontFamily: "monospace", fontSize: 10, color: "#6B6050", letterSpacing: "0.1em", marginTop: 4, textTransform: "uppercase" }}>
-                {stat.label}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div style={s.divider} />
-
-      {/* ── DASHBOARD PREVIEW ── */}
-      <div style={s.section}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1.4fr", gap: 48, alignItems: "start" }}>
-
-          {/* Left — Scheme portfolio */}
-          <div>
-            <div style={s.sectionLabel}>Your Portfolio</div>
-            <h2 style={{ ...s.sectionTitle, fontSize: 28 }}>All your schemes,<br />one command centre.</h2>
-            <p style={{ fontSize: 15, color: "#7B7060", lineHeight: 1.65, marginBottom: 28 }}>
-              Connect your loyalty accounts once. LoyaltyAgent tracks balances, expiry dates, and scheme health automatically — no manual updates.
-            </p>
-            <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 16, padding: 20 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                <span style={{ fontFamily: "monospace", fontSize: 10, color: "#6B6050", letterSpacing: "0.1em" }}>TOTAL PORTFOLIO VALUE</span>
-                <span style={{ fontFamily: "'Crimson Pro', Georgia, serif", fontSize: 28, fontWeight: 700, color: "#C9A84C" }}>$3,603</span>
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                {SCHEMES.map((sc, i) => <SchemeCard key={i} scheme={sc} index={i} />)}
-              </div>
-              <button style={{ width: "100%", marginTop: 14, padding: "11px 0", background: "transparent", border: "1px dashed rgba(201,168,76,0.3)", borderRadius: 8, color: "#C9A84C", fontFamily: "monospace", fontSize: 11, cursor: "pointer", letterSpacing: "0.1em" }}>
-                + ADD SCHEME
-              </button>
-            </div>
-          </div>
-
-          {/* Right — AI opportunities */}
-          <div>
-            <div style={s.sectionLabel}>Agent Matches — Today</div>
-            <h2 style={{ ...s.sectionTitle, fontSize: 28 }}>Personalised opportunities,<br />researched overnight.</h2>
-            <p style={{ fontSize: 15, color: "#7B7060", lineHeight: 1.65, marginBottom: 28 }}>
-              Background agents scan for new offers, switch bonuses, and earn accelerators — then score them against your profile before you wake up.
-            </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-              {OPPORTUNITIES.map((o, i) => <OpportunityCard key={i} opp={o} />)}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div style={s.divider} />
-
-      {/* ── HOW IT WORKS ── */}
-      <div style={s.section}>
-        <div style={{ textAlign: "center", marginBottom: 52 }}>
-          <div style={s.sectionLabel}>How the Agent Works</div>
-          <h2 style={{ ...s.sectionTitle, textAlign: "center" }}>Researching while you sleep.</h2>
-          <p style={{ fontSize: 16, color: "#7B7060", maxWidth: 500, margin: "12px auto 0", lineHeight: 1.65 }}>
-            As interchange legislation tightens, the richest points are shifting from everyday spend to switching events. LoyaltyAgent is built for exactly this world.
-          </p>
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
-          {[
-            { step: "01", icon: "🔗", title: "Connect", desc: "Link your existing schemes securely. We ingest balances, earn rates, expiry dates and tier status." },
-            { step: "02", icon: "🧬", title: "Profile", desc: "Your spending patterns, scheme mix, and switching appetite shape a personal opportunity score." },
-            { step: "03", icon: "🔍", title: "Discover", desc: "Agents scan banks, telcos, retailers and airlines daily for new bonuses, switch deals, and earn boosts." },
-            { step: "04", icon: "⚡", title: "Act", desc: "Matched offers arrive with a clear value case — click, compare, and capture while the window is open." },
-          ].map((item, i) => (
-            <div key={i} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14, padding: "28px 22px" }}>
-              <div style={{ fontSize: 28, marginBottom: 16 }}>{item.icon}</div>
-              <div style={{ fontFamily: "monospace", fontSize: 10, color: "#C9A84C", letterSpacing: "0.15em", marginBottom: 8 }}>STEP {item.step}</div>
-              <div style={{ fontFamily: "'Crimson Pro', Georgia, serif", fontSize: 20, fontWeight: 700, color: "#E8E4D9", marginBottom: 10 }}>{item.title}</div>
-              <div style={{ fontSize: 13, color: "#7B7060", lineHeight: 1.6 }}>{item.desc}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div style={s.divider} />
-
-      {/* ── THE BOOK ── */}
-      <div style={{ ...s.section, display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 60, alignItems: "center" }}>
-        <div>
-          <div style={s.sectionLabel}>The Book</div>
-          <h2 style={{ ...s.sectionTitle, fontSize: 40 }}>From wooden tokens<br />to AI-driven rewards.</h2>
-          <p style={{ fontSize: 16, color: "#7B7060", lineHeight: 1.7, marginBottom: 18 }}>
-            From Ancient Egypt's beer-and-bread tokens to AAdvantage's 115 million members — this is the definitive guide to how loyalty programs work, who wins, and how you can too.
-          </p>
-          <p style={{ fontSize: 16, color: "#7B7060", lineHeight: 1.7, marginBottom: 32 }}>
-            LoyaltyAgent readers get exclusive chapter summaries, accompanying data tools, and early access to opportunities surfaced in the book's research.
-          </p>
-          <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-            <button style={{ padding: "13px 28px", background: "#C9A84C", border: "none", borderRadius: 8, color: "#0D0B07", fontFamily: "monospace", fontSize: 12, cursor: "pointer", fontWeight: 800, letterSpacing: "0.1em" }}>
-              BUY THE BOOK
-            </button>
-            <button style={{ padding: "13px 28px", background: "transparent", border: "1px solid rgba(201,168,76,0.35)", borderRadius: 8, color: "#C9A84C", fontFamily: "monospace", fontSize: 12, cursor: "pointer", letterSpacing: "0.08em" }}>
-              READ CHAPTER 1 FREE
-            </button>
-          </div>
-        </div>
-
-        <div style={{
-          background: "linear-gradient(135deg, #1A1610 0%, #0D0B07 100%)",
-          border: "1px solid rgba(201,168,76,0.22)",
-          borderRadius: 16, padding: "40px 36px",
-          boxShadow: "0 40px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(201,168,76,0.12)",
-        }}>
-          <div style={{ fontFamily: "monospace", fontSize: 9, color: "#C9A84C", letterSpacing: "0.2em", marginBottom: 36, textTransform: "uppercase" }}>
-            Available now · Major Street Publishing
-          </div>
-          <div style={{ borderLeft: "3px solid #C9A84C", paddingLeft: 20, marginBottom: 32 }}>
-            <div style={{ fontFamily: "'Crimson Pro', Georgia, serif", fontSize: 14, color: "#8B8070", fontStyle: "italic", lineHeight: 1.65 }}>
-              "From wooden tokens to AI-driven, randomised experiential systems, loyalty programs are evolving fast — and the rules keep changing."
-            </div>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-            {["Loyal from the Start", "The Points Economy", "Master the Switch", "The AI Era"].map((ch, i) => (
-              <div key={i} style={{ background: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.1)", borderRadius: 8, padding: "12px 14px" }}>
-                <div style={{ fontFamily: "monospace", fontSize: 9, color: "#C9A84C", letterSpacing: "0.1em", marginBottom: 4 }}>
-                  CH.{String(i + 1).padStart(2, "0")}
-                </div>
-                <div style={{ fontSize: 12, color: "#9B9080", lineHeight: 1.4 }}>{ch}</div>
-              </div>
-            ))}
-          </div>
-          <div style={{ marginTop: 28, paddingTop: 20, borderTop: "1px solid rgba(255,255,255,0.05)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span style={{ fontSize: 14, color: "#C9A84C" }}>⭐⭐⭐⭐⭐</span>
-            <span style={{ fontFamily: "'Crimson Pro', Georgia, serif", fontSize: 13, color: "#6B6050" }}>David Moloney</span>
-          </div>
-        </div>
-      </div>
-
-      <div style={s.divider} />
-
-      {/* ── REGULATORY CALLOUT ── */}
-      <div style={{ ...s.section, display: "flex", justifyContent: "center" }}>
-        <div style={{ background: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.18)", borderRadius: 20, padding: "48px 52px", maxWidth: 780, width: "100%", textAlign: "center" }}>
-          <div style={s.sectionLabel}>The Regulatory Shift · 2025–2027</div>
-          <h2 style={{ ...s.sectionTitle, textAlign: "center", fontSize: 30, marginBottom: 16 }}>
-            As interchange fees fall,<br />switching bonuses become the new frontier.
-          </h2>
-          <p style={{ fontSize: 15, color: "#7B7060", lineHeight: 1.72, maxWidth: 580, margin: "0 auto 32px" }}>
-            New RBA legislation caps what banks can charge retailers per transaction. The era of generous everyday earn rates is fading. In its place: massive bonuses for switching credit cards, telcos, and energy providers. LoyaltyAgent tracks this world continuously.
-          </p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
-            {[
-              { label: "Credit Card Switches", desc: "50,000–200,000 pts for new card sign-ups" },
-              { label: "Telco Switches", desc: "Up to 100,000 pts for new mobile or NBN plans" },
-              { label: "Insurance & Energy", desc: "Emerging category — agents watch daily" },
-            ].map((c, i) => (
-              <div key={i} style={{ background: "rgba(255,255,255,0.025)", borderRadius: 10, padding: "20px 16px" }}>
-                <div style={{ fontFamily: "'Crimson Pro', Georgia, serif", fontSize: 14, fontWeight: 700, color: "#C9A84C", marginBottom: 6 }}>{c.label}</div>
-                <div style={{ fontSize: 12, color: "#6B6050", lineHeight: 1.5 }}>{c.desc}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div style={s.divider} />
-
-      {/* ── PRICING ── */}
-      <div style={s.section}>
-        <div style={{ textAlign: "center", marginBottom: 52 }}>
-          <div style={s.sectionLabel}>Membership</div>
-          <h2 style={{ ...s.sectionTitle, textAlign: "center" }}>Choose your edge.</h2>
-          <p style={{ fontSize: 16, color: "#7B7060", maxWidth: 420, margin: "12px auto 0", lineHeight: 1.65 }}>
-            Start free, upgrade when the opportunities speak for themselves. Most Optimiser members find the tier pays for itself within the first matched deal.
-          </p>
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, maxWidth: 900, margin: "0 auto" }}>
-          {TIERS.map((t, i) => <TierCard key={i} tier={t} />)}
-        </div>
-        <div style={{ textAlign: "center", marginTop: 28 }}>
-          <p style={{ fontFamily: "monospace", fontSize: 11, color: "#4B4030", letterSpacing: "0.06em" }}>
-            All plans include a 14-day free trial · Cancel anytime · Australian Privacy Act compliant
-          </p>
-        </div>
-      </div>
-
-      {/* ── FOOTER ── */}
-      <footer style={{ borderTop: "1px solid rgba(255,255,255,0.06)", padding: "36px 48px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
-        <div>
-          <div style={{ ...s.logo, fontSize: 17, marginBottom: 6 }}>
-            <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#C9A84C" }} />
-            loyalty<span style={{ color: "#C9A84C" }}>agent</span><span style={{ color: "#4B4030", fontSize: 15, fontWeight: 400 }}>.ai</span>
-          </div>
-          <div style={{ fontFamily: "monospace", fontSize: 10, color: "#4B4030", letterSpacing: "0.08em" }}>
-            The companion to Australia's Points Economy · © 2026
-          </div>
-        </div>
-        <div style={{ display: "flex", gap: 28, flexWrap: "wrap" }}>
-          {["Privacy Policy", "Terms of Use", "Financial Services Guide", "Contact"].map(l => (
-            <span key={l} style={{ fontFamily: "monospace", fontSize: 10, color: "#4B4030", cursor: "pointer", letterSpacing: "0.06em" }}>{l}</span>
-          ))}
-        </div>
-      </footer>
-    </div>
+  const toggleTop5 = id => setTopFive(prev =>
+    prev.includes(id) ? prev.filter(x => x !== id) :
+    prev.length >= 5 ? prev : [...prev, id]
   );
+
+  const initThresholds = () => {
+    const init = {};
+    selectedCats.forEach(c => {
+      if (thresholds[c.id] === undefined)
+        init[c.id] = Math.round(c.range[1] * 0.25 / c.step) * c.step;
+    });
+    setThresholds(p => ({ ...init, ...p }));
+  };
+
+  const validate1 = () => {
+    const e = {};
+    if (!name.trim()) e.name = "Please enter your name";
+    if (!email.trim()) e.email = "Please enter your email address";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = "Please enter a valid email address";
+    setErrors(e);
+    return !Object.keys(e).length;
+  };
+
+  const step2Next = () => {
+    if (!selected.size) return;
+    if (selectedArr.length <= 5) { setTopFive(selectedArr); initThresholds(); setStep(4); }
+    else setStep(3);
+  };
+
+  // ── DONE ──────────────────────────────────────────────────────────────────
+
+  if (done) return (
+    <>
+      <style>{CSS}</style>
+      <Shell step={4} done={true}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: 15 }}>
+          <div style={{ width: 72, height: 72, borderRadius: "50%", background: "linear-gradient(135deg, #FEF3C7, #FDE68A)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36 }}>🎉</div>
+          <div>
+            <h1 style={{ fontSize: 23, fontWeight: 900, color: "#111827", marginBottom: 7 }}>You're on the list!</h1>
+            <p style={{ fontSize: 13.5, color: "#6B7280", lineHeight: 1.65, maxWidth: 290, margin: "0 auto" }}>
+              Thanks {name.split(" ")[0] || "there"}! We've saved your loyalty profile.
+            </p>
+          </div>
+          <div style={{ background: "#F0FDF4", border: "1px solid #BBF7D0", borderRadius: 12, padding: "13px 15px", width: "100%" }}>
+            <p style={{ fontSize: 12.5, fontWeight: 700, color: "#15803D", marginBottom: 3 }}>What happens next</p>
+            <p style={{ fontSize: 12.5, color: "#166534", lineHeight: 1.6 }}>Watch <strong>{email || "your inbox"}</strong> for your welcome email and first matched opportunities.</p>
+          </div>
+          <div style={{ background: "#F8F7F4", borderRadius: 12, padding: "13px 15px", width: "100%", textAlign: "left" }}>
+            <p style={{ fontSize: 10.5, fontWeight: 700, color: "#9CA3AF", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 7 }}>Your profile</p>
+            <p style={{ fontSize: 12.5, color: "#6B7280", marginBottom: 7 }}>
+              <strong style={{ color: "#111827" }}>{selectedArr.length} schemes</strong> tracked ·{" "}
+              <strong style={{ color: "#111827" }}>{topFive.length}</strong> favourites ranked
+            </p>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+              {topFive.map((id, i) => {
+                const s = ALL_SCHEMES.find(x => x.id === id);
+                return s ? <span key={id} style={{ background: s.bg, color: s.fgDark ? "#1a1a1a" : "#fff", fontSize: 10.5, fontWeight: 700, fontFamily: "monospace", padding: "3px 8px", borderRadius: 5 }}>#{i+1} {s.abbr}</span> : null;
+              })}
+            </div>
+          </div>
+        </div>
+      </Shell>
+    </>
+  );
+
+  // ── STEP 1 ────────────────────────────────────────────────────────────────
+
+  if (step === 1) return (
+    <>
+      <style>{CSS}</style>
+      <Shell step={1} done={false} footer={<PBtn label="Continue →" onClick={() => { if (validate1()) setStep(2); }} />}>
+        <H t="Welcome to PointsStore" sub="Australia's definitive guide to loyalty points. Build your personal profile in about 2 minutes." />
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <div>
+            <label style={{ fontSize: 12.5, fontWeight: 600, color: "#374151", display: "block", marginBottom: 5 }}>Your name</label>
+            <input
+              className={`ps-input${errors.name ? " err" : ""}`}
+              type="text"
+              value={name}
+              placeholder="First and last name"
+              onChange={e => { setName(e.target.value); setErrors(p => ({ ...p, name: "" })); }}
+            />
+            {errors.name && <p style={{ fontSize: 11.5, color: "#EF4444", marginTop: 3 }}>{errors.name}</p>}
+          </div>
+          <div>
+            <label style={{ fontSize: 12.5, fontWeight: 600, color: "#374151", display: "block", marginBottom: 5 }}>Email address</label>
+            <input
+              className={`ps-input${errors.email ? " err" : ""}`}
+              type="email"
+              value={email}
+              placeholder="you@example.com"
+              onChange={e => { setEmail(e.target.value); setErrors(p => ({ ...p, email: "" })); }}
+            />
+            {errors.email && <p style={{ fontSize: 11.5, color: "#EF4444", marginTop: 3 }}>{errors.email}</p>}
+          </div>
+        </div>
+        <div style={{ marginTop: 15, padding: "10px 13px", background: "#FFFBEB", border: "1px solid #FDE68A", borderRadius: 10 }}>
+          <p style={{ fontSize: 11.5, color: "#92400E", lineHeight: 1.55 }}>🔒 Stored securely. We only use your details to send matched loyalty opportunities — we never sell your data.</p>
+        </div>
+      </Shell>
+    </>
+  );
+
+  // ── STEP 2 ────────────────────────────────────────────────────────────────
+
+  if (step === 2) return (
+    <>
+      <style>{CSS}</style>
+      <Shell step={2} done={false} footer={
+        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          <PBtn
+            label={selected.size ? `Continue with ${selected.size} scheme${selected.size !== 1 ? "s" : ""} →` : "Select at least one scheme"}
+            onClick={step2Next}
+            disabled={!selected.size}
+          />
+          <SBtn label="← Back" onClick={() => setStep(1)} />
+        </div>
+      }>
+        <H t="Which schemes are you in?" sub="Tap every loyalty program you belong to. Include ones you rarely use — we'll show you how to get more from all of them." />
+        {selected.size > 0 && (
+          <Badge>✓ {selected.size} scheme{selected.size !== 1 ? "s" : ""} selected across {selectedCats.length} categories</Badge>
+        )}
+        {CATS.map(cat => {
+          const catSelected = cat.schemes.filter(s => selected.has(s.id)).length;
+          return (
+            <div key={cat.id}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11.5, fontWeight: 700, color: "#374151", marginTop: 17, marginBottom: 8, paddingBottom: 6, borderBottom: "1px solid #F3F4F6" }}>
+                <span style={{ fontSize: 15 }}>{cat.emoji}</span>
+                <span style={{ flex: 1 }}>{cat.label}</span>
+                {catSelected > 0 && <span style={{ fontSize: 10, color: amber, fontWeight: 700 }}>✓ {catSelected}</span>}
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 7 }}>
+                {cat.schemes.map(s => (
+                  <SchemeTile key={s.id} s={s} on={selected.has(s.id)} toggle={toggleScheme} />
+                ))}
+              </div>
+            </div>
+          );
+        })}
+        <div style={{ height: 8 }} />
+      </Shell>
+    </>
+  );
+
+  // ── STEP 3 ────────────────────────────────────────────────────────────────
+
+  if (step === 3) return (
+    <>
+      <style>{CSS}</style>
+      <Shell step={3} done={false} footer={
+        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          <PBtn
+            label={topFive.length >= need5 ? "Continue →" : `Select ${need5 - topFive.length} more`}
+            onClick={() => { initThresholds(); setStep(4); }}
+            disabled={topFive.length < need5}
+          />
+          <SBtn label="← Back" onClick={() => setStep(2)} />
+        </div>
+      }>
+        <H t="Pick your top 5" sub="Tap your most important schemes in order of priority. These get the most focus in your personalised recommendations." />
+        {topFive.length === 5
+          ? <Badge bg="#FEF9EC" color="#92400E">★ Top 5 complete — tap any to reorder</Badge>
+          : <Badge>{topFive.length} of 5 selected — {5 - topFive.length} to go</Badge>
+        }
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 11 }}>
+          {selectedObjs.map(s => {
+            const rank = topFive.indexOf(s.id);
+            return (
+              <RankTile
+                key={s.id} s={s}
+                rank={rank >= 0 ? rank + 1 : null}
+                toggle={toggleTop5}
+                locked={topFive.length >= 5 && rank < 0}
+              />
+            );
+          })}
+        </div>
+        <div style={{ height: 8 }} />
+      </Shell>
+    </>
+  );
+
+  // ── STEP 4 ────────────────────────────────────────────────────────────────
+
+  if (step === 4) return (
+    <>
+      <style>{CSS}</style>
+      <Shell step={4} done={false} footer={
+        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          <PBtn label="I'm in — finish! 🎉" onClick={() => setDone(true)} grad />
+          <SBtn label="← Back" onClick={() => setStep(selectedArr.length > 5 ? 3 : 2)} />
+        </div>
+      }>
+        <H t="What would make you switch?" sub="For each category, drag to show how many bonus points would convince you to switch to a competing provider." />
+        {selectedCats.map(cat => {
+          const val = thresholds[cat.id] ?? Math.round(cat.range[1] * 0.25 / cat.step) * cat.step;
+          const pct = ((val - cat.range[0]) / (cat.range[1] - cat.range[0])) * 100;
+          return (
+            <div key={cat.id} style={{ background: "#FAFAFA", border: "1px solid #F3F4F6", borderRadius: 13, padding: "14px", marginBottom: 11 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                <span style={{ fontSize: 17 }}>{cat.emoji}</span>
+                <span style={{ fontSize: 12.5, fontWeight: 700, color: "#111827" }}>{cat.label}</span>
+              </div>
+              <p style={{ fontSize: 11, color: "#6B7280", marginBottom: 11, lineHeight: 1.5 }}>{cat.q}</p>
+              <div style={{ textAlign: "center", marginBottom: 12 }}>
+                <span style={{ fontSize: 30, fontWeight: 900, color: navy, lineHeight: 1 }}>{val.toLocaleString()}</span>
+                <span style={{ fontSize: 12, color: "#6B7280", marginLeft: 4, fontWeight: 600 }}>pts</span>
+              </div>
+              <input
+                type="range" className="ps-slider"
+                min={cat.range[0]} max={cat.range[1]} step={cat.step} value={val}
+                style={{ "--p": `${pct}%` }}
+                onChange={e => setThresholds(p => ({ ...p, [cat.id]: +e.target.value }))}
+              />
+              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4 }}>
+                <span style={{ fontSize: 9.5, color: "#9CA3AF" }}>0</span>
+                <span style={{ fontSize: 9.5, color: "#9CA3AF" }}>{fmtPts(cat.range[1])}</span>
+              </div>
+            </div>
+          );
+        })}
+        <div style={{ height: 8 }} />
+      </Shell>
+    </>
+  );
+
+  return null;
 }

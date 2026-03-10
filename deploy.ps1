@@ -1,4 +1,4 @@
-# deploy.ps1 — Push latest changes to GitHub
+# deploy.ps1 - Push latest changes to GitHub
 # Usage: Right-click → "Run with PowerShell", or run from terminal: .\deploy.ps1
 # Optionally pass a commit message: .\deploy.ps1 "Updated logo styling"
 
@@ -12,7 +12,7 @@ if ($Message -eq "") {
 }
 
 Write-Host ""
-Write-Host ">> LoyaltyAgent.ai — Deploying to GitHub" -ForegroundColor Cyan
+Write-Host ">> LoyaltyAgent.ai - Deploying to GitHub" -ForegroundColor Cyan
 Write-Host "   Commit: $Message" -ForegroundColor Gray
 Write-Host ""
 
@@ -22,7 +22,7 @@ git add .
 # Check if there's anything to commit
 $status = git status --porcelain
 if ($status -eq "") {
-    Write-Host ">> Nothing to deploy — no changes detected." -ForegroundColor Yellow
+    Write-Host ">> Nothing to deploy - no changes detected." -ForegroundColor Yellow
     Write-Host ""
     exit 0
 }

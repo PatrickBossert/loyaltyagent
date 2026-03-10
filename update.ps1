@@ -1,4 +1,4 @@
-# update.ps1 — Extract latest zip from Downloads and deploy to GitHub
+# update.ps1 - Extract latest zip from Downloads and deploy to GitHub
 # Usage: .\update.ps1
 # Run this from C:\Users\Patri\Documents\loyaltyagent
 
@@ -12,7 +12,7 @@ $Downloads = "$env:USERPROFILE\Downloads\$ZipName"
 $Desktop   = "$env:USERPROFILE\Desktop\$ZipName"
 
 Write-Host ""
-Write-Host ">> LoyaltyAgent.ai — Update & Deploy" -ForegroundColor Cyan
+Write-Host ">> LoyaltyAgent.ai - Update & Deploy" -ForegroundColor Cyan
 Write-Host ""
 
 # Find the zip (check Downloads then Desktop)
@@ -61,7 +61,7 @@ git add .
 $status = git status --porcelain
 if ($status -eq "") {
     Write-Host ""
-    Write-Host ">> Nothing to deploy — extracted files are identical to current version." -ForegroundColor Yellow
+    Write-Host ">> Nothing to deploy - extracted files are identical to current version." -ForegroundColor Yellow
     Write-Host ""
     exit 0
 }
