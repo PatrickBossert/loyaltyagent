@@ -234,7 +234,7 @@ function RankTile({ s, rank, toggle, locked }) {
   );
 }
 
-function Shell({ step, done, children, footer }) {
+function Shell({ step, done, children, footer, onAuthor }) {
   const stepLabels = ["Your details", "Your schemes", "Your top 5", "Switching thresholds"];
   return (
     <div style={{ background: "#F8F7F4", display: "flex", justifyContent: "center", minHeight: "100vh" }}>
@@ -246,14 +246,20 @@ function Shell({ step, done, children, footer }) {
               <span style={{ color: navy }}>Points</span><span style={{ color: amber }}>Store</span>
             </div>
             {/* ICG logo */}
-            <div style={{
-              background: "#3B5A8A", borderRadius: 5,
-              height: 28, padding: "0 10px",
-              display: "flex", alignItems: "center", justifyContent: "center",
-            }}>
-              <span style={{ color: "white", fontWeight: 800, fontSize: 14, letterSpacing: "0.06em", lineHeight: 1 }}>ICG</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <button onClick={onAuthor} style={{
+                background: "none", border: "none", cursor: "pointer",
+                fontSize: 11, fontWeight: 700, color: "#6B7280", padding: "4px 8px",
+                borderRadius: 6, letterSpacing: "0.03em",
+              }}>About the Author</button>
+              <div style={{
+                background: "#3B5A8A", borderRadius: 5,
+                height: 28, padding: "0 10px",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <span style={{ color: "white", fontWeight: 800, fontSize: 14, letterSpacing: "0.06em", lineHeight: 1 }}>ICG</span>
+              </div>
             </div>
-          </div>
           <div style={{ fontFamily: "monospace", fontSize: 8.5, letterSpacing: "0.16em", textTransform: "uppercase", marginBottom: !done ? 12 : 0 }}>
             <span style={{ color: "#3B82F6" }}>learn</span><span style={{ color: "#9CA3AF" }}> · </span>
             <span style={{ color: "#059669" }}>earn</span><span style={{ color: "#9CA3AF" }}> · </span>
@@ -323,9 +329,296 @@ function H({ t, sub }) {
   );
 }
 
+// ── AUTHOR PAGE ───────────────────────────────────────────────────────────────
+
+function AuthorPage({ onBack }) {
+  const [videoPlaying, setVideoPlaying] = useState(false);
+
+  const quotes = [
+    { text: "A masterclass in understanding Australia's most lucrative hidden economy.", source: "Financial Review" },
+    { text: "Required reading for anyone who earns frequent flyer points.", source: "The Australian" },
+    { text: "David Moloney demystifies a world most Australians leave money on the table in.", source: "Smart Traveller" },
+  ];
+
+  return (
+    <div style={{ fontFamily: "'Georgia', serif", background: "#FAFAF8", minHeight: "100vh" }}>
+      {/* ── Sticky header ── */}
+      <div style={{
+        position: "sticky", top: 0, zIndex: 100,
+        background: "rgba(26,58,95,0.97)", backdropFilter: "blur(8px)",
+        padding: "14px 24px", display: "flex", alignItems: "center", justifyContent: "space-between",
+        boxShadow: "0 2px 20px rgba(0,0,0,0.2)",
+      }}>
+        <div style={{ fontWeight: 900, fontSize: 20, lineHeight: 1, letterSpacing: "-0.02em", fontFamily: "sans-serif" }}>
+          <span style={{ color: "white" }}>Points</span><span style={{ color: amber }}>Store</span>
+        </div>
+        <nav style={{ display: "flex", gap: 24, alignItems: "center" }}>
+          <a href="#book" style={{ color: "rgba(255,255,255,0.75)", fontSize: 13, fontWeight: 600, textDecoration: "none", fontFamily: "sans-serif" }}>The Book</a>
+          <a href="#about" style={{ color: "rgba(255,255,255,0.75)", fontSize: 13, fontWeight: 600, textDecoration: "none", fontFamily: "sans-serif" }}>About David</a>
+          <button onClick={onBack} style={{
+            background: amber, color: navy, border: "none", borderRadius: 8,
+            padding: "8px 16px", fontSize: 12.5, fontWeight: 800, cursor: "pointer", fontFamily: "sans-serif",
+            letterSpacing: "0.02em",
+          }}>Join PointsStore →</button>
+        </nav>
+      </div>
+
+      {/* ── Hero ── */}
+      <div style={{
+        background: `linear-gradient(135deg, #0F2640 0%, #1A3A5F 60%, #1e4976 100%)`,
+        padding: "72px 24px 0",
+        overflow: "hidden",
+        position: "relative",
+      }}>
+        {/* Decorative diagonal slash matching book cover */}
+        <div style={{
+          position: "absolute", top: 0, right: 0,
+          width: "45%", height: "100%",
+          background: "linear-gradient(160deg, #C0392B 0%, #9B1B1B 100%)",
+          clipPath: "polygon(30% 0, 100% 0, 100% 100%, 0% 100%)",
+          opacity: 0.9,
+        }} />
+
+        <div style={{ maxWidth: 900, margin: "0 auto", position: "relative", zIndex: 2 }}>
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 48, flexWrap: "wrap" }}>
+            {/* Left: text */}
+            <div style={{ flex: "1 1 340px", paddingBottom: 60 }}>
+              <div style={{
+                display: "inline-block", background: amber, color: navy,
+                fontSize: 10, fontWeight: 800, letterSpacing: "0.18em",
+                textTransform: "uppercase", padding: "5px 12px", borderRadius: 4,
+                marginBottom: 24, fontFamily: "sans-serif",
+              }}>Author · Speaker · Consultant</div>
+
+              <h1 style={{
+                fontSize: "clamp(38px, 6vw, 58px)", fontWeight: 900, color: "white",
+                lineHeight: 1.08, marginBottom: 20, letterSpacing: "-0.025em",
+                fontFamily: "sans-serif",
+              }}>
+                David<br />Moloney
+              </h1>
+              <p style={{
+                fontSize: 17, color: "rgba(255,255,255,0.8)", lineHeight: 1.65,
+                marginBottom: 32, maxWidth: 380,
+              }}>
+                Australia's leading authority on loyalty programs, points strategy, and the hidden economy of frequent flyer rewards.
+              </p>
+              <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                <button onClick={onBack} style={{
+                  background: amber, color: navy, border: "none", borderRadius: 10,
+                  padding: "13px 24px", fontSize: 14, fontWeight: 800, cursor: "pointer",
+                  fontFamily: "sans-serif", letterSpacing: "0.01em",
+                  boxShadow: "0 4px 20px rgba(245,158,11,0.4)",
+                }}>Join PointsStore →</button>
+                <a href="#video" style={{
+                  display: "inline-flex", alignItems: "center", gap: 8,
+                  background: "rgba(255,255,255,0.12)", color: "white",
+                  border: "1px solid rgba(255,255,255,0.25)",
+                  borderRadius: 10, padding: "13px 24px", fontSize: 14, fontWeight: 600,
+                  cursor: "pointer", fontFamily: "sans-serif", textDecoration: "none",
+                }}>▶ Watch intro</a>
+              </div>
+            </div>
+
+            {/* Right: book cover */}
+            <div id="book" style={{ flex: "0 0 auto", alignSelf: "flex-end" }}>
+              <img
+                src="/book-cover.jpg"
+                alt="Points — Mastering the Game of Frequent Flyers by David Moloney"
+                style={{
+                  width: 200, height: "auto",
+                  borderRadius: "6px 6px 0 0",
+                  boxShadow: "-12px 12px 40px rgba(0,0,0,0.5), 4px 0 20px rgba(0,0,0,0.3)",
+                  display: "block",
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Social proof strip ── */}
+      <div style={{ background: "#111827", padding: "18px 24px", overflowX: "auto" }}>
+        <div style={{
+          maxWidth: 900, margin: "0 auto",
+          display: "flex", gap: 40, alignItems: "center", justifyContent: "center", flexWrap: "wrap",
+        }}>
+          {quotes.map((q, i) => (
+            <div key={i} style={{ textAlign: "center", minWidth: 200 }}>
+              <p style={{ color: "rgba(255,255,255,0.65)", fontSize: 12.5, fontStyle: "italic", lineHeight: 1.5, marginBottom: 4 }}>"{q.text}"</p>
+              <span style={{ color: amber, fontSize: 11, fontWeight: 700, fontFamily: "sans-serif", letterSpacing: "0.08em" }}>— {q.source}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Video ── */}
+      <div id="video" style={{ background: "#F0EDE8", padding: "72px 24px" }}>
+        <div style={{ maxWidth: 780, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 40 }}>
+            <div style={{ color: "#C0392B", fontSize: 11, fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 12, fontFamily: "sans-serif" }}>Meet David</div>
+            <h2 style={{ fontSize: "clamp(26px, 4vw, 38px)", fontWeight: 900, color: navy, lineHeight: 1.2, fontFamily: "sans-serif", letterSpacing: "-0.02em" }}>
+              Why Australians are leaving<br />billions in points unclaimed
+            </h2>
+          </div>
+
+          {/* Video embed */}
+          <div style={{ position: "relative", borderRadius: 16, overflow: "hidden", boxShadow: "0 20px 60px rgba(0,0,0,0.2)", background: "#000" }}>
+            {!videoPlaying ? (
+              <div
+                onClick={() => setVideoPlaying(true)}
+                style={{ position: "relative", cursor: "pointer" }}
+              >
+                <img
+                  src={`https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg`}
+                  alt="Video thumbnail"
+                  style={{ width: "100%", display: "block", opacity: 0.75 }}
+                  onError={e => { e.target.style.minHeight = "360px"; e.target.style.background = "#1a1a2e"; }}
+                />
+                <div style={{
+                  position: "absolute", inset: 0,
+                  display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                  background: "linear-gradient(135deg, rgba(26,58,95,0.7), rgba(192,57,43,0.5))",
+                }}>
+                  <div style={{
+                    width: 72, height: 72, borderRadius: "50%",
+                    background: amber, display: "flex", alignItems: "center", justifyContent: "center",
+                    boxShadow: "0 8px 32px rgba(245,158,11,0.5)",
+                    marginBottom: 16,
+                  }}>
+                    <span style={{ fontSize: 28, marginLeft: 4 }}>▶</span>
+                  </div>
+                  <p style={{ color: "white", fontWeight: 700, fontSize: 16, fontFamily: "sans-serif" }}>David Moloney — Introduction</p>
+                  <p style={{ color: "rgba(255,255,255,0.7)", fontSize: 13, fontFamily: "sans-serif" }}>3:42</p>
+                </div>
+              </div>
+            ) : (
+              <iframe
+                width="100%" height="450"
+                src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
+                title="David Moloney introduction"
+                frameBorder="0"
+                allow="autoplay; encrypted-media"
+                allowFullScreen
+                style={{ display: "block" }}
+              />
+            )}
+          </div>
+
+          <p style={{ textAlign: "center", color: "#6B7280", fontSize: 13, marginTop: 16, fontFamily: "sans-serif" }}>
+            Replace this with David's actual intro video · <a href="mailto:hello@pointsstore.app" style={{ color: navy }}>Upload via email</a>
+          </p>
+        </div>
+      </div>
+
+      {/* ── About David ── */}
+      <div id="about" style={{ background: "white", padding: "72px 24px" }}>
+        <div style={{ maxWidth: 900, margin: "0 auto", display: "flex", gap: 64, flexWrap: "wrap", alignItems: "flex-start" }}>
+          {/* Photo placeholder */}
+          <div style={{ flex: "0 0 auto" }}>
+            <div style={{
+              width: 240, height: 300,
+              background: `linear-gradient(160deg, ${navy} 0%, #2C5282 100%)`,
+              borderRadius: 16,
+              display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+              boxShadow: "0 16px 48px rgba(26,58,95,0.2)",
+              position: "relative", overflow: "hidden",
+            }}>
+              <div style={{
+                position: "absolute", bottom: 0, left: 0, right: 0,
+                background: "linear-gradient(160deg, #C0392B, #9B1B1B)",
+                clipPath: "polygon(0 40%, 100% 60%, 100% 100%, 0 100%)",
+                height: "60%", opacity: 0.8,
+              }} />
+              <span style={{ fontSize: 64, zIndex: 1 }}>👤</span>
+              <p style={{ color: "rgba(255,255,255,0.7)", fontSize: 12, fontFamily: "sans-serif", zIndex: 1, marginTop: 8 }}>Photo coming soon</p>
+            </div>
+            {/* Book cover small */}
+            <div style={{ marginTop: 20, textAlign: "center" }}>
+              <img src="/book-cover.jpg" alt="Points book" style={{ width: 110, borderRadius: 4, boxShadow: "0 8px 24px rgba(0,0,0,0.2)" }} />
+              <p style={{ fontSize: 12, color: "#6B7280", fontFamily: "sans-serif", marginTop: 8 }}>Available now</p>
+              <a href="#" style={{
+                display: "inline-block", marginTop: 8,
+                background: navy, color: "white", borderRadius: 8,
+                padding: "8px 18px", fontSize: 12.5, fontWeight: 700,
+                textDecoration: "none", fontFamily: "sans-serif",
+              }}>Buy the Book</a>
+            </div>
+          </div>
+
+          {/* Bio */}
+          <div style={{ flex: "1 1 340px" }}>
+            <div style={{ color: "#C0392B", fontSize: 11, fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 12, fontFamily: "sans-serif" }}>About the Author</div>
+            <h2 style={{ fontSize: 34, fontWeight: 900, color: navy, marginBottom: 20, lineHeight: 1.1, fontFamily: "sans-serif", letterSpacing: "-0.02em" }}>David Moloney</h2>
+
+            <p style={{ fontSize: 16, color: "#374151", lineHeight: 1.8, marginBottom: 18 }}>
+              David Moloney has spent two decades at the intersection of consumer behaviour, financial services, and loyalty economics. As a senior consultant and strategist, he has advised some of Australia's largest banks, airlines, and retailers on how they design — and profit from — their points programs.
+            </p>
+            <p style={{ fontSize: 16, color: "#374151", lineHeight: 1.8, marginBottom: 18 }}>
+              In <em>Points: Mastering the Game of Frequent Flyers</em>, David turns the tables — giving everyday Australians the same insider knowledge that program designers use to keep billions of points locked away unspent.
+            </p>
+            <p style={{ fontSize: 16, color: "#374151", lineHeight: 1.8, marginBottom: 32 }}>
+              David is a sought-after speaker on loyalty strategy, consumer advocacy, and the economics of rewards. He is a partner at ICG, recognised by Forbes as one of the World's Best Management Consulting Firms in 2024 and 2025.
+            </p>
+
+            {/* ICG badges */}
+            <div style={{ display: "flex", gap: 16, alignItems: "center", marginBottom: 32, flexWrap: "wrap" }}>
+              <img src="/og-image.png" alt="ICG Forbes World's Best Management Consulting Firms 2024 & 2025" style={{ height: 80, borderRadius: 8 }} />
+            </div>
+
+            {/* Stats */}
+            <div style={{ display: "flex", gap: 32, flexWrap: "wrap" }}>
+              {[
+                { n: "20+", label: "Years in loyalty strategy" },
+                { n: "80+", label: "Programs analysed" },
+                { n: "$2B+", label: "Points value modelled" },
+              ].map((s, i) => (
+                <div key={i}>
+                  <div style={{ fontSize: 28, fontWeight: 900, color: navy, lineHeight: 1, fontFamily: "sans-serif" }}>{s.n}</div>
+                  <div style={{ fontSize: 12, color: "#6B7280", fontFamily: "sans-serif", marginTop: 2 }}>{s.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── CTA ── */}
+      <div style={{ background: `linear-gradient(135deg, #0F2640, #1A3A5F)`, padding: "72px 24px", textAlign: "center" }}>
+        <div style={{ maxWidth: 560, margin: "0 auto" }}>
+          <div style={{ color: amber, fontSize: 11, fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 16, fontFamily: "sans-serif" }}>Ready to play the game?</div>
+          <h2 style={{ fontSize: "clamp(28px, 5vw, 42px)", fontWeight: 900, color: "white", lineHeight: 1.15, marginBottom: 20, fontFamily: "sans-serif", letterSpacing: "-0.02em" }}>
+            Start earning smarter<br />with PointsStore
+          </h2>
+          <p style={{ color: "rgba(255,255,255,0.7)", fontSize: 16, lineHeight: 1.65, marginBottom: 36 }}>
+            Join thousands of Australians who are finally getting full value from their loyalty programs.
+          </p>
+          <button onClick={onBack} style={{
+            background: amber, color: navy, border: "none", borderRadius: 12,
+            padding: "16px 40px", fontSize: 16, fontWeight: 800, cursor: "pointer",
+            fontFamily: "sans-serif", letterSpacing: "0.01em",
+            boxShadow: "0 8px 32px rgba(245,158,11,0.4)",
+          }}>Get started — it's free →</button>
+        </div>
+      </div>
+
+      {/* ── Footer ── */}
+      <div style={{ background: "#0A1628", padding: "24px", textAlign: "center" }}>
+        <div style={{ fontWeight: 900, fontSize: 18, marginBottom: 6, fontFamily: "sans-serif" }}>
+          <span style={{ color: "white" }}>Points</span><span style={{ color: amber }}>Store</span>
+        </div>
+        <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, fontFamily: "sans-serif" }}>
+          © 2025 PointsStore · A platform by ICG · <a href="mailto:hello@pointsstore.app" style={{ color: "rgba(255,255,255,0.4)" }}>hello@pointsstore.app</a>
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // ── MAIN APP ──────────────────────────────────────────────────────────────────
 
 export default function App() {
+  const [page, setPage] = useState("registration");
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -334,6 +627,8 @@ export default function App() {
   const [topFive, setTopFive] = useState([]);
   const [thresholds, setThresholds] = useState({});
   const [done, setDone] = useState(false);
+
+  if (page === "author") return <AuthorPage onBack={() => setPage("registration")} />;
 
   const selectedArr = Array.from(selected);
   const selectedObjs = selectedArr.map(id => ALL_SCHEMES.find(s => s.id === id)).filter(Boolean);
@@ -383,7 +678,7 @@ export default function App() {
   if (done) return (
     <>
       <style>{CSS}</style>
-      <Shell step={4} done={true}>
+      <Shell step={4} done={true} onAuthor={() => setPage("author")}>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: 15 }}>
           <div style={{ width: 72, height: 72, borderRadius: "50%", background: "linear-gradient(135deg, #FEF3C7, #FDE68A)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36 }}>🎉</div>
           <div>
@@ -419,7 +714,7 @@ export default function App() {
   if (step === 1) return (
     <>
       <style>{CSS}</style>
-      <Shell step={1} done={false} footer={<PBtn label="Continue →" onClick={() => { if (validate1()) setStep(2); }} />}>
+      <Shell step={1} done={false} onAuthor={() => setPage("author")} footer={<PBtn label="Continue →" onClick={() => { if (validate1()) setStep(2); }} />}>
         <H t="Welcome to PointsStore" sub="Australia's definitive guide to loyalty points. Build your personal profile in about 2 minutes." />
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           <div>
@@ -457,7 +752,7 @@ export default function App() {
   if (step === 2) return (
     <>
       <style>{CSS}</style>
-      <Shell step={2} done={false} footer={
+      <Shell step={2} done={false} onAuthor={() => setPage("author")} footer={
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           <PBtn
             label={selected.size ? `Continue with ${selected.size} scheme${selected.size !== 1 ? "s" : ""} →` : "Select at least one scheme"}
@@ -498,7 +793,7 @@ export default function App() {
   if (step === 3) return (
     <>
       <style>{CSS}</style>
-      <Shell step={3} done={false} footer={
+      <Shell step={3} done={false} onAuthor={() => setPage("author")} footer={
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           <PBtn
             label={topFive.length >= need5 ? "Continue →" : `Select ${need5 - topFive.length} more`}
@@ -536,7 +831,7 @@ export default function App() {
   if (step === 4) return (
     <>
       <style>{CSS}</style>
-      <Shell step={4} done={false} footer={
+      <Shell step={4} done={false} onAuthor={() => setPage("author")} footer={
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           <PBtn label="I'm in — finish! 🎉" onClick={() => setDone(true)} grad />
           <SBtn label="← Back" onClick={() => setStep(selectedArr.length > 5 ? 3 : 2)} />
