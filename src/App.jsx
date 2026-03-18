@@ -13,13 +13,15 @@ const amber = red; // alias — all amber references now use brand red
 // and as a mini accent mark beside the wordmark.
 
 function TailFin({ width = 120, opacity = 1, color = red, style = {} }) {
-  // Book cover tail fin: wide shape, strong diagonal left edge from bottom-left
-  // sweeping up to a gently rounded peak at top-right, straight right edge down
+  // Precise tail fin shape from brand asset:
+  // - Nearly vertical left edge rising to a rounded peak top-left
+  // - Wide gentle convex arc sweeping across the top
+  // - Straight diagonal trailing edge down to bottom-right
   return (
-    <svg width={width} height={width * 1.2} viewBox="0 0 100 120" fill="none"
+    <svg width={width} height={width * 0.88} viewBox="0 0 100 88" fill="none"
       xmlns="http://www.w3.org/2000/svg" style={{ display: "block", ...style }}>
       <path
-        d="M 5 120 C 10 105, 20 85, 35 65 C 50 45, 62 28, 70 16 C 76 8, 82 2, 88 2 Q 96 2 98 12 Q 100 24 98 55 L 98 120 Z"
+        d="M 0 88 C 2 65, 6 38, 9 16 Q 11 3, 20 2 C 42 1, 66 18, 82 42 L 105 88 Z"
         fill={color} opacity={opacity}
       />
     </svg>
