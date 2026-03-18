@@ -1,10 +1,47 @@
 import { useState } from "react";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 
-const navy = "#1A3A5F";
-const amber = "#F59E0B";
+const navy  = "#1A3A5F";
+const black = "#111111";
+const cream = "#F2EDE3";
+const red   = "#E62912";
+const amber = red; // alias — all amber references now use brand red
 
-// ── SCHEME DATA ───────────────────────────────────────────────────────────────
+// ── TAIL FIN MOTIF ────────────────────────────────────────────────────────────
+// The red diagonal on the book cover is an aircraft tail fin — the brand's
+// core visual. Used full-bleed on the author hero, ghosted on Done screen,
+// and as a mini accent mark beside the wordmark.
+
+function TailFin({ width = 120, opacity = 1, color = red, style = {} }) {
+  return (
+    <svg width={width} height={width * 1.35} viewBox="0 0 100 135" fill="none"
+      xmlns="http://www.w3.org/2000/svg" style={{ display: "block", ...style }}>
+      {/* The fin: sweeps from bottom-left up to a rounded peak top-right */}
+      <path
+        d="M 8 135 C 12 90, 28 45, 55 8 Q 72 -4 88 10 Q 102 24 98 48 L 98 135 Z"
+        fill={color} opacity={opacity}
+      />
+    </svg>
+  );
+}
+
+// ── WORDMARK ───────────────────────────────────────────────────────────────────
+function Wordmark({ size = 23 }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 5, lineHeight: 1 }}>
+      {/* Mini tail fin beside the name */}
+      <TailFin width={size * 0.65} style={{ marginTop: -1 }} />
+      <span style={{
+        fontFamily: "'Barlow Condensed', sans-serif",
+        fontWeight: 900, fontSize: size, letterSpacing: "0.01em",
+      }}>
+        <span style={{ color: black }}>POINTS</span><span style={{ color: red }}>Master</span>
+      </span>
+    </div>
+  );
+}
+
+
 const CATS = [
   {
     id: "airline", label: "Airlines & Flying", emoji: "✈️",
@@ -239,14 +276,12 @@ function Shell({ step, done, children, footer }) {
   const navigate = useNavigate();
   const stepLabels = ["Your details", "Your schemes", "Your top 5", "Switching thresholds"];
   return (
-    <div style={{ background: "#F8F7F4", display: "flex", justifyContent: "center", minHeight: "100vh" }}>
-      <div style={{ width: "100%", maxWidth: 440, background: "white", display: "flex", flexDirection: "column", boxShadow: "0 0 60px rgba(0,0,0,0.07)", minHeight: "100vh" }}>
+    <div style={{ background: cream, display: "flex", justifyContent: "center", minHeight: "100vh" }}>
+      <div style={{ width: "100%", maxWidth: 440, background: "white", display: "flex", flexDirection: "column", boxShadow: "0 0 60px rgba(0,0,0,0.09)", minHeight: "100vh", borderTop: `3px solid ${red}` }}>
         {/* Header */}
         <div style={{ padding: "16px 20px 13px", borderBottom: "1px solid #F3F4F6", flexShrink: 0 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 2 }}>
-            <div style={{ fontWeight: 900, fontSize: 23, lineHeight: 1, letterSpacing: "-0.02em" }}>
-              <span style={{ color: navy }}>Points</span><span style={{ color: amber }}>Store</span>
-            </div>
+            <Wordmark size={21} />
             {/* ICG logo */}
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <button onClick={() => navigate("/davidmoloney")} style={{
@@ -262,10 +297,11 @@ function Shell({ step, done, children, footer }) {
                 <span style={{ color: "white", fontWeight: 800, fontSize: 14, letterSpacing: "0.06em", lineHeight: 1 }}>ICG</span>
               </div>
             </div>
+          </div>
           <div style={{ fontFamily: "monospace", fontSize: 8.5, letterSpacing: "0.16em", textTransform: "uppercase", marginBottom: !done ? 12 : 0 }}>
-            <span style={{ color: "#3B82F6" }}>learn</span><span style={{ color: "#9CA3AF" }}> · </span>
-            <span style={{ color: "#059669" }}>earn</span><span style={{ color: "#9CA3AF" }}> · </span>
-            <span style={{ color: amber }}>burn</span>
+            <span style={{ color: black }}>learn</span><span style={{ color: "#9CA3AF" }}> · </span>
+            <span style={{ color: black }}>earn</span><span style={{ color: "#9CA3AF" }}> · </span>
+            <span style={{ color: red }}>burn</span>
           </div>
           {!done && (
             <>
@@ -274,7 +310,7 @@ function Shell({ step, done, children, footer }) {
                 <span style={{ fontSize: 10.5, color: "#6B7280", fontWeight: 600 }}>{stepLabels[step - 1]}</span>
               </div>
               <div style={{ height: 4, background: "#F3F4F6", borderRadius: 2, overflow: "hidden" }}>
-                <div style={{ height: "100%", borderRadius: 2, background: `linear-gradient(90deg, ${navy}, ${amber})`, width: `${(step / 4) * 100}%`, transition: "width 0.4s cubic-bezier(0.22,1,0.36,1)" }} />
+                <div style={{ height: "100%", borderRadius: 2, background: `linear-gradient(90deg, ${black}, ${red})`, width: `${(step / 4) * 100}%`, transition: "width 0.4s cubic-bezier(0.22,1,0.36,1)" }} />
               </div>
             </>
           )}
@@ -298,10 +334,12 @@ function PBtn({ label, onClick, disabled, grad }) {
   return (
     <button onClick={onClick} disabled={disabled} className="ps-pri" style={{
       width: "100%", padding: "14px",
-      background: grad ? `linear-gradient(135deg, ${navy}, #2C5282)` : disabled ? "#E5E7EB" : navy,
+      background: grad ? `linear-gradient(135deg, ${red}, #B01E0B)` : disabled ? "#E5E7EB" : black,
       color: disabled ? "#9CA3AF" : "white", border: "none", borderRadius: 12,
       fontSize: 14, fontWeight: 700, cursor: disabled ? "not-allowed" : "pointer",
-      boxShadow: grad ? "0 4px 18px rgba(26,58,95,0.3)" : "none",
+      fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: "0.06em",
+      fontSize: 15,
+      boxShadow: grad ? `0 4px 18px rgba(230,41,18,0.35)` : "none",
     }}>{label}</button>
   );
 }
@@ -349,55 +387,55 @@ function AuthorPage() {
       {/* ── Sticky header ── */}
       <div style={{
         position: "sticky", top: 0, zIndex: 100,
-        background: "rgba(26,58,95,0.97)", backdropFilter: "blur(8px)",
+        background: "rgba(17,17,17,0.97)", backdropFilter: "blur(8px)",
         padding: "14px 24px", display: "flex", alignItems: "center", justifyContent: "space-between",
         boxShadow: "0 2px 20px rgba(0,0,0,0.2)",
       }}>
-        <div style={{ fontWeight: 900, fontSize: 20, lineHeight: 1, letterSpacing: "-0.02em", fontFamily: "sans-serif" }}>
-          <span style={{ color: "white" }}>Points</span><span style={{ color: amber }}>Store</span>
-        </div>
+        <Wordmark size={20} />
         <nav style={{ display: "flex", gap: 24, alignItems: "center" }}>
           <a href="#book" style={{ color: "rgba(255,255,255,0.75)", fontSize: 13, fontWeight: 600, textDecoration: "none", fontFamily: "sans-serif" }}>The Book</a>
           <a href="#about" style={{ color: "rgba(255,255,255,0.75)", fontSize: 13, fontWeight: 600, textDecoration: "none", fontFamily: "sans-serif" }}>About David</a>
           <button onClick={onBack} style={{
-            background: amber, color: navy, border: "none", borderRadius: 8,
-            padding: "8px 16px", fontSize: 12.5, fontWeight: 800, cursor: "pointer", fontFamily: "sans-serif",
-            letterSpacing: "0.02em",
-          }}>Join PointsStore →</button>
+            background: red, color: "white", border: "none", borderRadius: 8,
+            padding: "8px 16px", fontSize: 12.5, fontWeight: 800, cursor: "pointer",
+            fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: "0.06em",
+          }}>JOIN POINTSMaster →</button>
         </nav>
       </div>
 
       {/* ── Hero ── */}
       <div style={{
-        background: `linear-gradient(135deg, #0F2640 0%, #1A3A5F 60%, #1e4976 100%)`,
+        background: `linear-gradient(150deg, #111111 0%, #1a1a1a 60%, #222 100%)`,
         padding: "72px 24px 0",
         overflow: "hidden",
         position: "relative",
       }}>
-        {/* Decorative diagonal slash matching book cover */}
+        {/* Tail fin — full bleed right side, matching the book cover exactly */}
         <div style={{
           position: "absolute", top: 0, right: 0,
-          width: "45%", height: "100%",
-          background: "linear-gradient(160deg, #C0392B 0%, #9B1B1B 100%)",
-          clipPath: "polygon(30% 0, 100% 0, 100% 100%, 0% 100%)",
-          opacity: 0.9,
-        }} />
+          width: "52%", height: "100%",
+          display: "flex", alignItems: "flex-end", justifyContent: "flex-end",
+          overflow: "hidden",
+        }}>
+          <TailFin width={420} color={red} opacity={1}
+            style={{ position: "absolute", bottom: 0, right: -20 }} />
+        </div>
 
         <div style={{ maxWidth: 900, margin: "0 auto", position: "relative", zIndex: 2 }}>
           <div style={{ display: "flex", alignItems: "flex-end", gap: 48, flexWrap: "wrap" }}>
             {/* Left: text */}
             <div style={{ flex: "1 1 340px", paddingBottom: 60 }}>
               <div style={{
-                display: "inline-block", background: amber, color: navy,
+                display: "inline-block", background: red, color: "white",
                 fontSize: 10, fontWeight: 800, letterSpacing: "0.18em",
                 textTransform: "uppercase", padding: "5px 12px", borderRadius: 4,
-                marginBottom: 24, fontFamily: "sans-serif",
+                marginBottom: 24, fontFamily: "'Barlow Condensed', sans-serif",
               }}>Author · Speaker · Consultant</div>
 
               <h1 style={{
                 fontSize: "clamp(38px, 6vw, 58px)", fontWeight: 900, color: "white",
                 lineHeight: 1.08, marginBottom: 20, letterSpacing: "-0.025em",
-                fontFamily: "sans-serif",
+                fontFamily: "'Barlow Condensed', sans-serif",
               }}>
                 David<br />Moloney
               </h1>
@@ -409,11 +447,11 @@ function AuthorPage() {
               </p>
               <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
                 <button onClick={onBack} style={{
-                  background: amber, color: navy, border: "none", borderRadius: 10,
-                  padding: "13px 24px", fontSize: 14, fontWeight: 800, cursor: "pointer",
-                  fontFamily: "sans-serif", letterSpacing: "0.01em",
-                  boxShadow: "0 4px 20px rgba(245,158,11,0.4)",
-                }}>Join PointsStore →</button>
+                  background: red, color: "white", border: "none", borderRadius: 10,
+                  padding: "13px 24px", fontSize: 15, fontWeight: 800, cursor: "pointer",
+                  fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: "0.06em",
+                  boxShadow: `0 4px 20px rgba(230,41,18,0.4)`,
+                }}>JOIN POINTSMaster →</button>
                 <a href="#video" style={{
                   display: "inline-flex", alignItems: "center", gap: 8,
                   background: "rgba(255,255,255,0.12)", color: "white",
@@ -450,18 +488,18 @@ function AuthorPage() {
           {quotes.map((q, i) => (
             <div key={i} style={{ textAlign: "center", minWidth: 200 }}>
               <p style={{ color: "rgba(255,255,255,0.65)", fontSize: 12.5, fontStyle: "italic", lineHeight: 1.5, marginBottom: 4 }}>"{q.text}"</p>
-              <span style={{ color: amber, fontSize: 11, fontWeight: 700, fontFamily: "sans-serif", letterSpacing: "0.08em" }}>— {q.source}</span>
+              <span style={{ color: red, fontSize: 11, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: "0.08em" }}>— {q.source}</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* ── Video ── */}
-      <div id="video" style={{ background: "#F0EDE8", padding: "72px 24px" }}>
+      <div id="video" style={{ background: cream, padding: "72px 24px" }}>
         <div style={{ maxWidth: 780, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 40 }}>
-            <div style={{ color: "#C0392B", fontSize: 11, fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 12, fontFamily: "sans-serif" }}>Meet David</div>
-            <h2 style={{ fontSize: "clamp(26px, 4vw, 38px)", fontWeight: 900, color: navy, lineHeight: 1.2, fontFamily: "sans-serif", letterSpacing: "-0.02em" }}>
+            <div style={{ color: red, fontSize: 11, fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 12, fontFamily: "'Barlow Condensed', sans-serif" }}>Meet David</div>
+            <h2 style={{ fontSize: "clamp(26px, 4vw, 38px)", fontWeight: 900, color: black, lineHeight: 1.2, fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: "-0.01em" }}>
               Why Australians are leaving<br />billions in points unclaimed
             </h2>
           </div>
@@ -482,12 +520,12 @@ function AuthorPage() {
                 <div style={{
                   position: "absolute", inset: 0,
                   display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-                  background: "linear-gradient(135deg, rgba(26,58,95,0.7), rgba(192,57,43,0.5))",
+                  background: "linear-gradient(135deg, rgba(17,17,17,0.7), rgba(230,41,18,0.5))",
                 }}>
                   <div style={{
                     width: 72, height: 72, borderRadius: "50%",
-                    background: amber, display: "flex", alignItems: "center", justifyContent: "center",
-                    boxShadow: "0 8px 32px rgba(245,158,11,0.5)",
+                    background: red, display: "flex", alignItems: "center", justifyContent: "center",
+                    boxShadow: `0 8px 32px rgba(230,41,18,0.5)`,
                     marginBottom: 16,
                   }}>
                     <span style={{ fontSize: 28, marginLeft: 4 }}>▶</span>
@@ -510,7 +548,7 @@ function AuthorPage() {
           </div>
 
           <p style={{ textAlign: "center", color: "#6B7280", fontSize: 13, marginTop: 16, fontFamily: "sans-serif" }}>
-            Replace this with David's actual intro video · <a href="mailto:hello@pointsstore.app" style={{ color: navy }}>Upload via email</a>
+            Replace this with David's actual intro video · <a href="mailto:hello@pointsstore.app" style={{ color: red }}>Upload via email</a>
           </p>
         </div>
       </div>
@@ -522,20 +560,16 @@ function AuthorPage() {
           <div style={{ flex: "0 0 auto" }}>
             <div style={{
               width: 240, height: 300,
-              background: `linear-gradient(160deg, ${navy} 0%, #2C5282 100%)`,
+              background: `linear-gradient(160deg, #111 0%, #222 100%)`,
               borderRadius: 16,
               display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-              boxShadow: "0 16px 48px rgba(26,58,95,0.2)",
+              boxShadow: "0 16px 48px rgba(0,0,0,0.25)",
               position: "relative", overflow: "hidden",
             }}>
-              <div style={{
-                position: "absolute", bottom: 0, left: 0, right: 0,
-                background: "linear-gradient(160deg, #C0392B, #9B1B1B)",
-                clipPath: "polygon(0 40%, 100% 60%, 100% 100%, 0 100%)",
-                height: "60%", opacity: 0.8,
-              }} />
+              <TailFin width={200} color={red} opacity={0.9}
+                style={{ position: "absolute", bottom: -20, right: -20 }} />
               <span style={{ fontSize: 64, zIndex: 1 }}>👤</span>
-              <p style={{ color: "rgba(255,255,255,0.7)", fontSize: 12, fontFamily: "sans-serif", zIndex: 1, marginTop: 8 }}>Photo coming soon</p>
+              <p style={{ color: "rgba(255,255,255,0.6)", fontSize: 12, fontFamily: "'Barlow Condensed', sans-serif", zIndex: 1, marginTop: 8 }}>Photo coming soon</p>
             </div>
             {/* Book cover small */}
             <div style={{ marginTop: 20, textAlign: "center" }}>
@@ -543,17 +577,18 @@ function AuthorPage() {
               <p style={{ fontSize: 12, color: "#6B7280", fontFamily: "sans-serif", marginTop: 8 }}>Available now</p>
               <a href="#" style={{
                 display: "inline-block", marginTop: 8,
-                background: navy, color: "white", borderRadius: 8,
+                background: black, color: "white", borderRadius: 8,
                 padding: "8px 18px", fontSize: 12.5, fontWeight: 700,
-                textDecoration: "none", fontFamily: "sans-serif",
-              }}>Buy the Book</a>
+                textDecoration: "none", fontFamily: "'Barlow Condensed', sans-serif",
+                letterSpacing: "0.06em",
+              }}>BUY THE BOOK</a>
             </div>
           </div>
 
           {/* Bio */}
           <div style={{ flex: "1 1 340px" }}>
-            <div style={{ color: "#C0392B", fontSize: 11, fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 12, fontFamily: "sans-serif" }}>About the Author</div>
-            <h2 style={{ fontSize: 34, fontWeight: 900, color: navy, marginBottom: 20, lineHeight: 1.1, fontFamily: "sans-serif", letterSpacing: "-0.02em" }}>David Moloney</h2>
+            <div style={{ color: red, fontSize: 11, fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 12, fontFamily: "'Barlow Condensed', sans-serif" }}>About the Author</div>
+            <h2 style={{ fontSize: 34, fontWeight: 900, color: black, marginBottom: 20, lineHeight: 1.1, fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: "0.01em" }}>David Moloney</h2>
 
             <p style={{ fontSize: 16, color: "#374151", lineHeight: 1.8, marginBottom: 18 }}>
               David Moloney has spent two decades at the intersection of consumer behaviour, financial services, and loyalty economics. As a senior consultant and strategist, he has advised some of Australia's largest banks, airlines, and retailers on how they design — and profit from — their points programs.
@@ -578,7 +613,7 @@ function AuthorPage() {
                 { n: "$2B+", label: "Points value modelled" },
               ].map((s, i) => (
                 <div key={i}>
-                  <div style={{ fontSize: 28, fontWeight: 900, color: navy, lineHeight: 1, fontFamily: "sans-serif" }}>{s.n}</div>
+                  <div style={{ fontSize: 28, fontWeight: 900, color: red, lineHeight: 1, fontFamily: "'Barlow Condensed', sans-serif" }}>{s.n}</div>
                   <div style={{ fontSize: 12, color: "#6B7280", fontFamily: "sans-serif", marginTop: 2 }}>{s.label}</div>
                 </div>
               ))}
@@ -588,31 +623,34 @@ function AuthorPage() {
       </div>
 
       {/* ── CTA ── */}
-      <div style={{ background: `linear-gradient(135deg, #0F2640, #1A3A5F)`, padding: "72px 24px", textAlign: "center" }}>
-        <div style={{ maxWidth: 560, margin: "0 auto" }}>
-          <div style={{ color: amber, fontSize: 11, fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 16, fontFamily: "sans-serif" }}>Ready to play the game?</div>
-          <h2 style={{ fontSize: "clamp(28px, 5vw, 42px)", fontWeight: 900, color: "white", lineHeight: 1.15, marginBottom: 20, fontFamily: "sans-serif", letterSpacing: "-0.02em" }}>
-            Start earning smarter<br />with PointsStore
+      <div style={{ background: black, padding: "72px 24px", textAlign: "center", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", top: 0, right: 0, opacity: 0.08, pointerEvents: "none" }}>
+          <TailFin width={300} color={red} />
+        </div>
+        <div style={{ maxWidth: 560, margin: "0 auto", position: "relative", zIndex: 1 }}>
+          <div style={{ color: red, fontSize: 11, fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 16, fontFamily: "'Barlow Condensed', sans-serif" }}>Ready to play the game?</div>
+          <h2 style={{ fontSize: "clamp(28px, 5vw, 48px)", fontWeight: 900, color: "white", lineHeight: 1.1, marginBottom: 20, fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: "0.01em" }}>
+            Start earning smarter<br />with POINTSMaster
           </h2>
-          <p style={{ color: "rgba(255,255,255,0.7)", fontSize: 16, lineHeight: 1.65, marginBottom: 36 }}>
+          <p style={{ color: "rgba(255,255,255,0.65)", fontSize: 16, lineHeight: 1.65, marginBottom: 36 }}>
             Join thousands of Australians who are finally getting full value from their loyalty programs.
           </p>
           <button onClick={onBack} style={{
-            background: amber, color: navy, border: "none", borderRadius: 12,
+            background: red, color: "white", border: "none", borderRadius: 12,
             padding: "16px 40px", fontSize: 16, fontWeight: 800, cursor: "pointer",
-            fontFamily: "sans-serif", letterSpacing: "0.01em",
-            boxShadow: "0 8px 32px rgba(245,158,11,0.4)",
-          }}>Get started — it's free →</button>
+            fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: "0.08em",
+            boxShadow: `0 8px 32px rgba(230,41,18,0.4)`,
+          }}>GET STARTED — IT'S FREE →</button>
         </div>
       </div>
 
       {/* ── Footer ── */}
-      <div style={{ background: "#0A1628", padding: "24px", textAlign: "center" }}>
-        <div style={{ fontWeight: 900, fontSize: 18, marginBottom: 6, fontFamily: "sans-serif" }}>
-          <span style={{ color: "white" }}>Points</span><span style={{ color: amber }}>Store</span>
+      <div style={{ background: "#0A0A0A", padding: "24px", textAlign: "center" }}>
+        <div style={{ marginBottom: 6, display: "flex", justifyContent: "center" }}>
+          <Wordmark size={18} />
         </div>
-        <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, fontFamily: "sans-serif" }}>
-          © 2025 PointsStore · A platform by ICG · <a href="mailto:hello@pointsstore.app" style={{ color: "rgba(255,255,255,0.4)" }}>hello@pointsstore.app</a>
+        <p style={{ color: "rgba(255,255,255,0.35)", fontSize: 12, fontFamily: "sans-serif" }}>
+          © 2025 POINTSMaster · A platform by ICG · <a href="mailto:hello@pointsstore.app" style={{ color: "rgba(255,255,255,0.35)" }}>hello@pointsstore.app</a>
         </p>
       </div>
     </div>
@@ -673,19 +711,23 @@ function RegistrationApp() {
     <>
       <style>{CSS}</style>
       <Shell step={4} done={true}>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: 15 }}>
-          <div style={{ width: 72, height: 72, borderRadius: "50%", background: "linear-gradient(135deg, #FEF3C7, #FDE68A)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36 }}>🎉</div>
-          <div>
-            <h1 style={{ fontSize: 23, fontWeight: 900, color: "#111827", marginBottom: 7 }}>You're on the list!</h1>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: 15, position: "relative" }}>
+          {/* Ghost tail fin watermark */}
+          <div style={{ position: "absolute", top: -18, right: -18, pointerEvents: "none", zIndex: 0 }}>
+            <TailFin width={160} opacity={0.06} color={red} />
+          </div>
+          <div style={{ width: 72, height: 72, borderRadius: "50%", background: `linear-gradient(135deg, ${red}22, ${red}44)`, border: `2px solid ${red}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36, position: "relative", zIndex: 1 }}>🎉</div>
+          <div style={{ position: "relative", zIndex: 1 }}>
+            <h1 style={{ fontSize: 23, fontWeight: 900, color: black, marginBottom: 7, fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: "0.02em" }}>You're on the list!</h1>
             <p style={{ fontSize: 13.5, color: "#6B7280", lineHeight: 1.65, maxWidth: 290, margin: "0 auto" }}>
               Thanks {name.split(" ")[0] || "there"}! We've saved your loyalty profile.
             </p>
           </div>
-          <div style={{ background: "#F0FDF4", border: "1px solid #BBF7D0", borderRadius: 12, padding: "13px 15px", width: "100%" }}>
-            <p style={{ fontSize: 12.5, fontWeight: 700, color: "#15803D", marginBottom: 3 }}>What happens next</p>
-            <p style={{ fontSize: 12.5, color: "#166534", lineHeight: 1.6 }}>Watch <strong>{email || "your inbox"}</strong> for your welcome email and first matched opportunities.</p>
+          <div style={{ background: `${red}0D`, border: `1px solid ${red}33`, borderRadius: 12, padding: "13px 15px", width: "100%", position: "relative", zIndex: 1 }}>
+            <p style={{ fontSize: 12.5, fontWeight: 700, color: red, marginBottom: 3 }}>What happens next</p>
+            <p style={{ fontSize: 12.5, color: "#374151", lineHeight: 1.6 }}>Watch <strong>{email || "your inbox"}</strong> for your welcome email and first matched opportunities.</p>
           </div>
-          <div style={{ background: "#F8F7F4", borderRadius: 12, padding: "13px 15px", width: "100%", textAlign: "left" }}>
+          <div style={{ background: cream, borderRadius: 12, padding: "13px 15px", width: "100%", textAlign: "left", position: "relative", zIndex: 1 }}>
             <p style={{ fontSize: 10.5, fontWeight: 700, color: "#9CA3AF", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 7 }}>Your profile</p>
             <p style={{ fontSize: 12.5, color: "#6B7280", marginBottom: 7 }}>
               <strong style={{ color: "#111827" }}>{selectedArr.length} schemes</strong> tracked ·{" "}
@@ -709,7 +751,7 @@ function RegistrationApp() {
     <>
       <style>{CSS}</style>
       <Shell step={1} done={false} footer={<PBtn label="Continue →" onClick={() => { if (validate1()) setStep(2); }} />}>
-        <H t="Welcome to PointsStore" sub="Australia's definitive guide to loyalty points. Build your personal profile in about 2 minutes." />
+        <H t="Welcome to POINTSMaster" sub="Australia's definitive guide to loyalty points. Build your personal profile in about 2 minutes." />
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           <div>
             <label style={{ fontSize: 12.5, fontWeight: 600, color: "#374151", display: "block", marginBottom: 5 }}>Your name</label>
