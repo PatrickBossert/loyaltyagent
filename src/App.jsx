@@ -479,6 +479,7 @@ function AuthorPage() {
                 style={{
                   width: 220, height: "auto",
                   display: "block",
+                  position: "relative", zIndex: 2,
                 }}
               />
               <img
@@ -560,18 +561,21 @@ function AuthorPage() {
               overflow: "hidden",
               boxShadow: "0 16px 48px rgba(0,0,0,0.3)",
               position: "relative",
-              display: "flex", alignItems: "flex-end", justifyContent: "center",
             }}>
-              <TailFin width={200} color={red} opacity={0.9}
-                style={{ position: "absolute", bottom: -20, right: -20 }} />
+              <TailFin width={220} color={red} opacity={0.95}
+                style={{ position: "absolute", bottom: -10, right: -10, zIndex: 0 }} />
               <img
                 src="/david-moloney.png"
                 alt="David Moloney"
                 style={{
-                  width: "100%", height: "100%",
-                  objectFit: "cover", objectPosition: "center top",
+                  position: "absolute",
+                  bottom: 0,
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  height: "100%",
+                  width: "auto",
                   display: "block",
-                  position: "relative", zIndex: 1,
+                  zIndex: 1,
                 }}
               />
             </div>
