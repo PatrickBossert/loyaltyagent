@@ -13,15 +13,15 @@ const amber = red; // alias — all amber references now use brand red
 // and as a mini accent mark beside the wordmark.
 
 function TailFin({ width = 120, opacity = 1, color = red, style = {} }) {
-  // Precise tail fin shape from brand asset:
-  // - Nearly vertical left edge rising to a rounded peak top-left
-  // - Wide gentle convex arc sweeping across the top
-  // - Straight diagonal trailing edge down to bottom-right
+  // Matches tail_motif.png exactly:
+  // - Near-vertical left edge from bottom-left rising up
+  // - Wide gentle convex arc across the top (peak at ~25% from left)
+  // - Straight diagonal trailing edge from top-right down to bottom-right
   return (
-    <svg width={width} height={width * 0.88} viewBox="0 0 100 88" fill="none"
+    <svg width={width} height={width * 0.85} viewBox="0 0 120 100" fill="none"
       xmlns="http://www.w3.org/2000/svg" style={{ display: "block", ...style }}>
       <path
-        d="M 0 88 C 2 65, 6 38, 9 16 Q 11 3, 20 2 C 42 1, 66 18, 82 42 L 105 88 Z"
+        d="M 8 100 C 6 78, 5 52, 8 28 C 10 12, 14 2, 24 2 C 44 2, 68 14, 88 38 C 98 52, 106 68, 112 85 L 112 100 Z"
         fill={color} opacity={opacity}
       />
     </svg>
@@ -429,7 +429,7 @@ function AuthorPage() {
       }}>
 
         <div style={{ maxWidth: 900, margin: "0 auto", position: "relative", zIndex: 2 }}>
-          <div style={{ display: "flex", alignItems: "flex-end", gap: 48, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 32, flexWrap: "wrap" }}>
             {/* Left: text */}
             <div style={{ flex: "1 1 340px", paddingBottom: 60 }}>
               <div style={{
@@ -469,30 +469,37 @@ function AuthorPage() {
               </div>
             </div>
 
-            {/* Right: tail fin behind David + book cover beside */}
-            <div id="book" style={{ flex: "0 0 auto", alignSelf: "flex-end", display: "flex", gap: 16, alignItems: "flex-end" }}>
-              {/* David with tail fin layered behind him */}
-              <div style={{ position: "relative", display: "flex", alignItems: "flex-end" }}>
-                <TailFin width={300} color={red} opacity={1}
-                  style={{ position: "absolute", bottom: 0, left: "50%", transform: "translateX(-30%)", zIndex: 0 }} />
+            {/* Right: tail fin as base, David on top, book in front */}
+            <div id="book" style={{ flex: "0 0 auto", alignSelf: "flex-end", display: "flex", alignItems: "flex-end", gap: 0 }}>
+              {/* Tail fin + David stacked in the same box */}
+              <div style={{ position: "relative", width: 280, height: 340, flexShrink: 0 }}>
+                {/* Tail fin fills the box — renders in background */}
+                <TailFin width={320} color={red} opacity={1}
+                  style={{ position: "absolute", bottom: 0, left: -20, zIndex: 0 }} />
+                {/* David PNG — alpha punches through to reveal tail fin */}
                 <img
                   src="/david-moloney.png"
                   alt="David Moloney"
                   style={{
-                    width: 220, height: "auto",
-                    display: "block",
-                    position: "relative", zIndex: 1,
+                    position: "absolute", bottom: 0, left: "50%",
+                    transform: "translateX(-50%)",
+                    height: "100%", width: "auto",
+                    display: "block", zIndex: 1,
                   }}
                 />
               </div>
+              {/* Book cover — in front */}
               <img
                 src="/book-cover.jpg"
-                alt="Points — Mastering the Game of Frequent Flyers by David Moloney"
+                alt="Points book"
                 style={{
-                  width: 140, height: "auto",
+                  width: 150, height: "auto",
                   borderRadius: "6px 6px 0 0",
-                  boxShadow: "-8px 8px 30px rgba(0,0,0,0.5)",
+                  boxShadow: "-8px 8px 30px rgba(0,0,0,0.6)",
                   display: "block",
+                  position: "relative", zIndex: 2,
+                  marginLeft: -24, flexShrink: 0,
+                  alignSelf: "flex-end",
                 }}
               />
           </div>
@@ -531,7 +538,10 @@ function AuthorPage() {
               ref={el => {
                 if (!el) return;
                 const obs = new IntersectionObserver(
-                  ([entry]) => { if (entry.isIntersecting) { el.play(); } else { el.pause(); } },
+                  ([entry]) => {
+                    if (entry.isIntersecting) { el.currentTime = 0; el.play(); }
+                    else { el.pause(); }
+                  },
                   { threshold: 0.5 }
                 );
                 obs.observe(el);
