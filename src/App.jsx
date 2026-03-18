@@ -210,15 +210,20 @@ const CSS = `
 
 function SchemeTile({ s, on, toggle }) {
   const tc = s.fgDark ? "#1a1a1a" : "#fff";
+  const r = parseInt(s.bg.slice(1,3),16);
+  const g = parseInt(s.bg.slice(3,5),16);
+  const b = parseInt(s.bg.slice(5,7),16);
   return (
     <button onClick={() => toggle(s.id)} style={{
-      position: "relative", width: "100%", minHeight: 76,
+      position: "relative", width: "100%", minHeight: 82,
       background: on ? s.bg : "#F3F4F6",
       border: `2px solid ${on ? s.bg : "#E5E7EB"}`,
-      borderRadius: 12, padding: "7px 4px", cursor: "pointer",
+      borderRadius: 12, padding: "8px 5px", cursor: "pointer",
       transition: "all 0.15s ease", display: "flex", flexDirection: "column",
-      alignItems: "center", justifyContent: "center", gap: 3,
-      boxShadow: on ? `0 4px 12px ${s.bg}55` : `0 2px 8px ${s.bg}30`,
+      alignItems: "center", justifyContent: "center", gap: 4,
+      boxShadow: on
+        ? `0 4px 14px rgba(${r},${g},${b},0.55)`
+        : `0 2px 10px rgba(${r},${g},${b},0.28), inset 0 0 0 1px rgba(${r},${g},${b},0.15)`,
       transform: on ? "scale(1.04)" : "scale(1)",
     }}>
       {on && (
@@ -232,9 +237,9 @@ function SchemeTile({ s, on, toggle }) {
           </svg>
         </div>
       )}
-      <span style={{ fontSize: 15, lineHeight: 1 }}>{s.icon}</span>
-      <span style={{ fontFamily: "monospace", fontWeight: 700, fontSize: 10.5, color: on ? tc : "#374151", letterSpacing: "0.04em", lineHeight: 1.1 }}>{s.abbr}</span>
-      <span style={{ fontSize: 8, color: on ? (s.fgDark ? "rgba(0,0,0,0.6)" : "rgba(255,255,255,0.8)") : "#9CA3AF", textAlign: "center", lineHeight: 1.2, paddingLeft: 1, paddingRight: 1 }}>{s.name}</span>
+      <span style={{ fontSize: 18, lineHeight: 1 }}>{s.icon}</span>
+      <span style={{ fontFamily: "monospace", fontWeight: 700, fontSize: 12.5, color: on ? tc : "#374151", letterSpacing: "0.04em", lineHeight: 1.1 }}>{s.abbr}</span>
+      <span style={{ fontSize: 9.5, color: on ? (s.fgDark ? "rgba(0,0,0,0.65)" : "rgba(255,255,255,0.85)") : "#6B7280", textAlign: "center", lineHeight: 1.25, paddingLeft: 2, paddingRight: 2 }}>{s.name}</span>
     </button>
   );
 }
