@@ -14,11 +14,11 @@ const amber = red; // alias — all amber references now use brand red
 
 function TailFin({ width = 120, opacity = 1, color = red, style = {} }) {
   return (
-    <svg width={width} height={width * 1.35} viewBox="0 0 100 135" fill="none"
+    <svg width={width} height={width * 1.25} viewBox="0 0 100 125" fill="none"
       xmlns="http://www.w3.org/2000/svg" style={{ display: "block", ...style }}>
-      {/* The fin: sweeps from bottom-left up to a rounded peak top-right */}
+      {/* Concave left sweep from bottom, rounding to peak at top-right — matches book cover */}
       <path
-        d="M 8 135 C 12 90, 28 45, 55 8 Q 72 -4 88 10 Q 102 24 98 48 L 98 135 Z"
+        d="M 8 125 C 18 110, 38 82, 58 50 C 70 30, 80 12, 86 6 Q 92 0 96 8 Q 100 18 97 45 L 97 125 Z"
         fill={color} opacity={opacity}
       />
     </svg>
@@ -424,16 +424,6 @@ function AuthorPage() {
         overflow: "hidden",
         position: "relative",
       }}>
-        {/* Tail fin — full bleed right side, matching the book cover exactly */}
-        <div style={{
-          position: "absolute", top: 0, right: 0,
-          width: "52%", height: "100%",
-          display: "flex", alignItems: "flex-end", justifyContent: "flex-end",
-          overflow: "hidden",
-        }}>
-          <TailFin width={420} color={red} opacity={1}
-            style={{ position: "absolute", bottom: 0, right: -20 }} />
-        </div>
 
         <div style={{ maxWidth: 900, margin: "0 auto", position: "relative", zIndex: 2 }}>
           <div style={{ display: "flex", alignItems: "flex-end", gap: 48, flexWrap: "wrap" }}>
@@ -476,17 +466,22 @@ function AuthorPage() {
               </div>
             </div>
 
-            {/* Right: David's photo + book cover */}
+            {/* Right: tail fin behind David + book cover beside */}
             <div id="book" style={{ flex: "0 0 auto", alignSelf: "flex-end", display: "flex", gap: 16, alignItems: "flex-end" }}>
-              <img
-                src="/david-moloney.png"
-                alt="David Moloney"
-                style={{
-                  width: 220, height: "auto",
-                  display: "block",
-                  position: "relative", zIndex: 2,
-                }}
-              />
+              {/* David with tail fin layered behind him */}
+              <div style={{ position: "relative", display: "flex", alignItems: "flex-end" }}>
+                <TailFin width={260} color={red} opacity={1}
+                  style={{ position: "absolute", bottom: 0, right: -20, zIndex: 0 }} />
+                <img
+                  src="/david-moloney.png"
+                  alt="David Moloney"
+                  style={{
+                    width: 220, height: "auto",
+                    display: "block",
+                    position: "relative", zIndex: 1,
+                  }}
+                />
+              </div>
               <img
                 src="/book-cover.jpg"
                 alt="Points — Mastering the Game of Frequent Flyers by David Moloney"
