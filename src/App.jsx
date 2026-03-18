@@ -493,6 +493,7 @@ function AuthorPage() {
                 }}
               />
           </div>
+          </div>
         </div>
       </div>
 
