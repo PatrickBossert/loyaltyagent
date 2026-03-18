@@ -462,15 +462,25 @@ function AuthorPage() {
               </div>
             </div>
 
-            {/* Right: book cover */}
-            <div id="book" style={{ flex: "0 0 auto", alignSelf: "flex-end" }}>
+            {/* Right: David's photo + book cover */}
+            <div id="book" style={{ flex: "0 0 auto", alignSelf: "flex-end", display: "flex", gap: 16, alignItems: "flex-end" }}>
+              <img
+                src="/david-moloney.png"
+                alt="David Moloney"
+                style={{
+                  width: 220, height: "auto",
+                  borderRadius: "12px 12px 0 0",
+                  display: "block",
+                  filter: "drop-shadow(-12px 12px 30px rgba(0,0,0,0.5))",
+                }}
+              />
               <img
                 src="/book-cover.jpg"
                 alt="Points — Mastering the Game of Frequent Flyers by David Moloney"
                 style={{
-                  width: 200, height: "auto",
+                  width: 140, height: "auto",
                   borderRadius: "6px 6px 0 0",
-                  boxShadow: "-12px 12px 40px rgba(0,0,0,0.5), 4px 0 20px rgba(0,0,0,0.3)",
+                  boxShadow: "-8px 8px 30px rgba(0,0,0,0.5)",
                   display: "block",
                 }}
               />
@@ -560,16 +570,16 @@ function AuthorPage() {
           <div style={{ flex: "0 0 auto" }}>
             <div style={{
               width: 240, height: 300,
-              background: `linear-gradient(160deg, #111 0%, #222 100%)`,
               borderRadius: 16,
-              display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-              boxShadow: "0 16px 48px rgba(0,0,0,0.25)",
-              position: "relative", overflow: "hidden",
+              overflow: "hidden",
+              boxShadow: "0 16px 48px rgba(0,0,0,0.3)",
+              position: "relative",
             }}>
-              <TailFin width={200} color={red} opacity={0.9}
-                style={{ position: "absolute", bottom: -20, right: -20 }} />
-              <span style={{ fontSize: 64, zIndex: 1 }}>👤</span>
-              <p style={{ color: "rgba(255,255,255,0.6)", fontSize: 12, fontFamily: "'Barlow Condensed', sans-serif", zIndex: 1, marginTop: 8 }}>Photo coming soon</p>
+              <img
+                src="/david-moloney.png"
+                alt="David Moloney"
+                style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }}
+              />
             </div>
             {/* Book cover small */}
             <div style={{ marginTop: 20, textAlign: "center" }}>
