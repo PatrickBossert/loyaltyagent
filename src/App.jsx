@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 
 const navy = "#1A3A5F";
 const amber = "#F59E0B";
@@ -234,7 +235,8 @@ function RankTile({ s, rank, toggle, locked }) {
   );
 }
 
-function Shell({ step, done, children, footer, onAuthor }) {
+function Shell({ step, done, children, footer }) {
+  const navigate = useNavigate();
   const stepLabels = ["Your details", "Your schemes", "Your top 5", "Switching thresholds"];
   return (
     <div style={{ background: "#F8F7F4", display: "flex", justifyContent: "center", minHeight: "100vh" }}>
@@ -247,7 +249,7 @@ function Shell({ step, done, children, footer, onAuthor }) {
             </div>
             {/* ICG logo */}
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <button onClick={onAuthor} style={{
+              <button onClick={() => navigate("/davidmoloney")} style={{
                 background: "none", border: "none", cursor: "pointer",
                 fontSize: 11, fontWeight: 700, color: "#6B7280", padding: "4px 8px",
                 borderRadius: 6, letterSpacing: "0.03em",
@@ -331,7 +333,9 @@ function H({ t, sub }) {
 
 // ── AUTHOR PAGE ───────────────────────────────────────────────────────────────
 
-function AuthorPage({ onBack }) {
+function AuthorPage() {
+  const navigate = useNavigate();
+  const onBack = () => navigate("/");
   const [videoPlaying, setVideoPlaying] = useState(false);
 
   const quotes = [
@@ -617,18 +621,8 @@ function AuthorPage({ onBack }) {
 
 // ── MAIN APP ──────────────────────────────────────────────────────────────────
 
-export default function App() {
-  const [page, setPage] = useState("registration");
+function RegistrationApp() {
   const [step, setStep] = useState(1);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [errors, setErrors] = useState({});
-  const [selected, setSelected] = useState(new Set());
-  const [topFive, setTopFive] = useState([]);
-  const [thresholds, setThresholds] = useState({});
-  const [done, setDone] = useState(false);
-
-  if (page === "author") return <AuthorPage onBack={() => setPage("registration")} />;
 
   const selectedArr = Array.from(selected);
   const selectedObjs = selectedArr.map(id => ALL_SCHEMES.find(s => s.id === id)).filter(Boolean);
@@ -678,7 +672,7 @@ export default function App() {
   if (done) return (
     <>
       <style>{CSS}</style>
-      <Shell step={4} done={true} onAuthor={() => setPage("author")}>
+      <Shell step={4} done={true}>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: 15 }}>
           <div style={{ width: 72, height: 72, borderRadius: "50%", background: "linear-gradient(135deg, #FEF3C7, #FDE68A)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36 }}>🎉</div>
           <div>
@@ -714,7 +708,7 @@ export default function App() {
   if (step === 1) return (
     <>
       <style>{CSS}</style>
-      <Shell step={1} done={false} onAuthor={() => setPage("author")} footer={<PBtn label="Continue →" onClick={() => { if (validate1()) setStep(2); }} />}>
+      <Shell step={1} done={false} footer={<PBtn label="Continue →" onClick={() => { if (validate1()) setStep(2); }} />}>
         <H t="Welcome to PointsStore" sub="Australia's definitive guide to loyalty points. Build your personal profile in about 2 minutes." />
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           <div>
@@ -752,7 +746,7 @@ export default function App() {
   if (step === 2) return (
     <>
       <style>{CSS}</style>
-      <Shell step={2} done={false} onAuthor={() => setPage("author")} footer={
+      <Shell step={2} done={false} footer={
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           <PBtn
             label={selected.size ? `Continue with ${selected.size} scheme${selected.size !== 1 ? "s" : ""} →` : "Select at least one scheme"}
@@ -793,7 +787,7 @@ export default function App() {
   if (step === 3) return (
     <>
       <style>{CSS}</style>
-      <Shell step={3} done={false} onAuthor={() => setPage("author")} footer={
+      <Shell step={3} done={false} footer={
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           <PBtn
             label={topFive.length >= need5 ? "Continue →" : `Select ${need5 - topFive.length} more`}
@@ -831,7 +825,7 @@ export default function App() {
   if (step === 4) return (
     <>
       <style>{CSS}</style>
-      <Shell step={4} done={false} onAuthor={() => setPage("author")} footer={
+      <Shell step={4} done={false} footer={
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           <PBtn label="I'm in — finish! 🎉" onClick={() => setDone(true)} grad />
           <SBtn label="← Back" onClick={() => setStep(selectedArr.length > 5 ? 3 : 2)} />
@@ -871,4 +865,15 @@ export default function App() {
   );
 
   return null;
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<RegistrationApp />} />
+        <Route path="/davidmoloney" element={<AuthorPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
