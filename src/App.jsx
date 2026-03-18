@@ -479,7 +479,6 @@ function AuthorPage() {
                 style={{
                   width: 220, height: "auto",
                   display: "block",
-                  mixBlendMode: "lighten",
                 }}
               />
               <img
@@ -573,7 +572,6 @@ function AuthorPage() {
                   objectFit: "cover", objectPosition: "center top",
                   display: "block",
                   position: "relative", zIndex: 1,
-                  mixBlendMode: "lighten",
                 }}
               />
             </div>
