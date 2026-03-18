@@ -661,6 +661,13 @@ function AuthorPage() {
 
 function RegistrationApp() {
   const [step, setStep] = useState(1);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [errors, setErrors] = useState({});
+  const [selected, setSelected] = useState(new Set());
+  const [topFive, setTopFive] = useState([]);
+  const [thresholds, setThresholds] = useState({});
+  const [done, setDone] = useState(false);
 
   const selectedArr = Array.from(selected);
   const selectedObjs = selectedArr.map(id => ALL_SCHEMES.find(s => s.id === id)).filter(Boolean);
