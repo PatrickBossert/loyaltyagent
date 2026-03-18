@@ -13,12 +13,13 @@ const amber = red; // alias — all amber references now use brand red
 // and as a mini accent mark beside the wordmark.
 
 function TailFin({ width = 120, opacity = 1, color = red, style = {} }) {
+  // Book cover tail fin: wide shape, strong diagonal left edge from bottom-left
+  // sweeping up to a gently rounded peak at top-right, straight right edge down
   return (
-    <svg width={width} height={width * 1.25} viewBox="0 0 100 125" fill="none"
+    <svg width={width} height={width * 1.2} viewBox="0 0 100 120" fill="none"
       xmlns="http://www.w3.org/2000/svg" style={{ display: "block", ...style }}>
-      {/* Concave left sweep from bottom, rounding to peak at top-right — matches book cover */}
       <path
-        d="M 8 125 C 18 110, 38 82, 58 50 C 70 30, 80 12, 86 6 Q 92 0 96 8 Q 100 18 97 45 L 97 125 Z"
+        d="M 5 120 C 10 105, 20 85, 35 65 C 50 45, 62 28, 70 16 C 76 8, 82 2, 88 2 Q 96 2 98 12 Q 100 24 98 55 L 98 120 Z"
         fill={color} opacity={opacity}
       />
     </svg>
@@ -470,8 +471,8 @@ function AuthorPage() {
             <div id="book" style={{ flex: "0 0 auto", alignSelf: "flex-end", display: "flex", gap: 16, alignItems: "flex-end" }}>
               {/* David with tail fin layered behind him */}
               <div style={{ position: "relative", display: "flex", alignItems: "flex-end" }}>
-                <TailFin width={260} color={red} opacity={1}
-                  style={{ position: "absolute", bottom: 0, right: -20, zIndex: 0 }} />
+                <TailFin width={300} color={red} opacity={1}
+                  style={{ position: "absolute", bottom: 0, left: "50%", transform: "translateX(-30%)", zIndex: 0 }} />
                 <img
                   src="/david-moloney.png"
                   alt="David Moloney"
