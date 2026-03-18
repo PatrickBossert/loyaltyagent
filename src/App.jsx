@@ -66,8 +66,8 @@ const CATS = [
     q: "How many bonus points would convince you to switch your main supermarket or food rewards program?",
     range: [0, 50000], step: 500,
     schemes: [
-      { id: "flybuys",   name: "Flybuys (Coles)",          abbr: "FB",   bg: "#CC1F1F", icon: "🛒" },
-      { id: "edr",       name: "Everyday Rewards",         abbr: "EDR",  bg: "#166534", icon: "🛒" },
+      { id: "flybuys",   name: "Flybuys (Coles)",          abbr: "FB",   bg: "#003087", icon: "🛒" },
+      { id: "edr",       name: "Everyday Rewards",         abbr: "EDR",  bg: "#E55A00", icon: "🛒" },
       { id: "mydans",    name: "My Dan's",                 abbr: "DM",   bg: "#C8900A", icon: "🍾" },
       { id: "mymaccas",  name: "MyMacca's Rewards",        abbr: "MCD",  bg: "#DA291C", icon: "🍟" },
       { id: "subway",    name: "Subway MyWay",             abbr: "SUB",  bg: "#007337", icon: "🥖" },
@@ -218,7 +218,7 @@ function SchemeTile({ s, on, toggle }) {
       borderRadius: 12, padding: "7px 4px", cursor: "pointer",
       transition: "all 0.15s ease", display: "flex", flexDirection: "column",
       alignItems: "center", justifyContent: "center", gap: 3,
-      boxShadow: on ? `0 4px 12px ${s.bg}55` : "none",
+      boxShadow: on ? `0 4px 12px ${s.bg}55` : `0 2px 8px ${s.bg}30`,
       transform: on ? "scale(1.04)" : "scale(1)",
     }}>
       {on && (
@@ -479,7 +479,7 @@ function AuthorPage() {
                 style={{
                   width: 220, height: "auto",
                   display: "block",
-                  filter: "drop-shadow(-8px 8px 24px rgba(0,0,0,0.6))",
+                  mixBlendMode: "lighten",
                 }}
               />
               <img
@@ -492,7 +492,6 @@ function AuthorPage() {
                   display: "block",
                 }}
               />
-            </div>
           </div>
         </div>
       </div>
@@ -525,12 +524,21 @@ function AuthorPage() {
           {/* Video embed */}
           <div style={{ position: "relative", borderRadius: 16, overflow: "hidden", boxShadow: "0 20px 60px rgba(0,0,0,0.2)", background: "#000" }}>
             <video
+              ref={el => {
+                if (!el) return;
+                const obs = new IntersectionObserver(
+                  ([entry]) => { if (entry.isIntersecting) { el.play(); } else { el.pause(); } },
+                  { threshold: 0.5 }
+                );
+                obs.observe(el);
+              }}
+              poster="/david-intro-poster.jpg"
               controls
-              poster="/david-moloney.png"
+              muted
+              playsInline
               style={{ width: "100%", display: "block", maxHeight: 500 }}
             >
               <source src="/david-intro.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
             </video>
           </div>
 
@@ -552,13 +560,20 @@ function AuthorPage() {
               overflow: "hidden",
               boxShadow: "0 16px 48px rgba(0,0,0,0.3)",
               position: "relative",
+              display: "flex", alignItems: "flex-end", justifyContent: "center",
             }}>
               <TailFin width={200} color={red} opacity={0.9}
                 style={{ position: "absolute", bottom: -20, right: -20 }} />
               <img
                 src="/david-moloney.png"
                 alt="David Moloney"
-                style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "bottom center", display: "block", position: "relative", zIndex: 1 }}
+                style={{
+                  width: "100%", height: "100%",
+                  objectFit: "cover", objectPosition: "center top",
+                  display: "block",
+                  position: "relative", zIndex: 1,
+                  mixBlendMode: "lighten",
+                }}
               />
             </div>
             {/* Book cover small */}
