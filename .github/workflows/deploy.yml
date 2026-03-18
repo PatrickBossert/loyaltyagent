@@ -3,10 +3,10 @@ name: Deploy to Cloudflare Pages
 on:
   push:
     branches:
-      - main        # Auto-deploy on every push to main
+      - main
   pull_request:
     branches:
-      - main        # Preview deployment for every PR
+      - main
 
 jobs:
   deploy:
@@ -14,7 +14,7 @@ jobs:
     permissions:
       contents: read
       deployments: write
-      pull-requests: write  # Allows posting preview URL as a PR comment
+      pull-requests: write
 
     steps:
       - name: Checkout repository
@@ -23,7 +23,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Install dependencies
         run: npm install
@@ -33,13 +33,11 @@ jobs:
 
       - name: Deploy to Cloudflare Pages
         id: deploy
-        uses: cloudflare/pages-action@v1
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: loyaltyagent
-          directory: dist
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          command: pages deploy dist --project-name=loyaltyagent --commit-dirty=true
 
       - name: Comment preview URL on PR
         if: github.event_name == 'pull_request'
@@ -50,5 +48,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `✅ Preview deployed to: ${{ steps.deploy.outputs.deployment-url }}`
+              body: `✅ Preview deployed to Cloudflare Pages`
             })
