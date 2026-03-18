@@ -26,16 +26,15 @@ function TailFin({ width = 120, opacity = 1, color = red, style = {} }) {
 }
 
 // ── WORDMARK ───────────────────────────────────────────────────────────────────
-function Wordmark({ size = 23 }) {
+function Wordmark({ size = 23, dark = false }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 5, lineHeight: 1 }}>
-      {/* Mini tail fin beside the name */}
       <TailFin width={size * 0.65} style={{ marginTop: -1 }} />
       <span style={{
         fontFamily: "'Barlow Condensed', sans-serif",
         fontWeight: 900, fontSize: size, letterSpacing: "0.01em",
       }}>
-        <span style={{ color: black }}>POINTS</span><span style={{ color: red }}>Master</span>
+        <span style={{ color: dark ? cream : black }}>POINTS</span><span style={{ color: red }}>Master</span>
       </span>
     </div>
   );
@@ -282,21 +281,19 @@ function Shell({ step, done, children, footer }) {
         <div style={{ padding: "16px 20px 13px", borderBottom: "1px solid #F3F4F6", flexShrink: 0 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 2 }}>
             <Wordmark size={21} />
-            {/* ICG logo */}
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <button onClick={() => navigate("/davidmoloney")} style={{
-                background: "none", border: "none", cursor: "pointer",
-                fontSize: 11, fontWeight: 700, color: "#6B7280", padding: "4px 8px",
-                borderRadius: 6, letterSpacing: "0.03em",
-              }}>About the Author</button>
-              <div style={{
-                background: "#3B5A8A", borderRadius: 5,
-                height: 28, padding: "0 10px",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                <span style={{ color: "white", fontWeight: 800, fontSize: 14, letterSpacing: "0.06em", lineHeight: 1 }}>ICG</span>
-              </div>
-            </div>
+            {/* David Moloney photo — links to author page */}
+            <button onClick={() => navigate("/davidmoloney")} style={{
+              background: "none", border: "2px solid #E5E7EB", borderRadius: "50%",
+              padding: 0, cursor: "pointer", width: 36, height: 36, overflow: "hidden",
+              flexShrink: 0, transition: "border-color 0.2s",
+            }}
+              onMouseEnter={e => e.currentTarget.style.borderColor = red}
+              onMouseLeave={e => e.currentTarget.style.borderColor = "#E5E7EB"}
+              title="About the Author — David Moloney"
+            >
+              <img src="/david-moloney-small.png" alt="David Moloney"
+                style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }} />
+            </button>
           </div>
           <div style={{ fontFamily: "monospace", fontSize: 8.5, letterSpacing: "0.16em", textTransform: "uppercase", marginBottom: !done ? 12 : 0 }}>
             <span style={{ color: black }}>learn</span><span style={{ color: "#9CA3AF" }}> · </span>
@@ -320,11 +317,24 @@ function Shell({ step, done, children, footer }) {
           {children}
         </div>
         {/* Sticky footer */}
-        {footer && (
+        {footer ? (
           <div style={{ padding: "10px 18px 26px", borderTop: "1px solid #F3F4F6", background: "white", flexShrink: 0 }}>
             {footer}
+            <div style={{ textAlign: "center", marginTop: 10, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+              <span style={{ fontSize: 10, color: "#9CA3AF" }}>POINTSMaster is powered by</span>
+              <div style={{ background: "#3B5A8A", borderRadius: 4, height: 18, padding: "0 6px", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ color: "white", fontWeight: 800, fontSize: 10, letterSpacing: "0.06em" }}>ICG</span>
+              </div>
+            </div>
           </div>
-        )}
+        ) : done ? (
+          <div style={{ padding: "10px 18px 20px", borderTop: "1px solid #F3F4F6", background: "white", flexShrink: 0, textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+            <span style={{ fontSize: 10, color: "#9CA3AF" }}>POINTSMaster is powered by</span>
+            <div style={{ background: "#3B5A8A", borderRadius: 4, height: 18, padding: "0 6px", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ color: "white", fontWeight: 800, fontSize: 10, letterSpacing: "0.06em" }}>ICG</span>
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );
@@ -374,7 +384,6 @@ function H({ t, sub }) {
 function AuthorPage() {
   const navigate = useNavigate();
   const onBack = () => navigate("/");
-  const [videoPlaying, setVideoPlaying] = useState(false);
 
   const quotes = [
     { text: "A masterclass in understanding Australia's most lucrative hidden economy.", source: "Financial Review" },
@@ -391,7 +400,7 @@ function AuthorPage() {
         padding: "14px 24px", display: "flex", alignItems: "center", justifyContent: "space-between",
         boxShadow: "0 2px 20px rgba(0,0,0,0.2)",
       }}>
-        <Wordmark size={20} />
+        <Wordmark size={20} dark />
         <nav style={{ display: "flex", gap: 24, alignItems: "center" }}>
           <a href="#book" style={{ color: "rgba(255,255,255,0.75)", fontSize: 13, fontWeight: 600, textDecoration: "none", fontFamily: "sans-serif" }}>The Book</a>
           <a href="#about" style={{ color: "rgba(255,255,255,0.75)", fontSize: 13, fontWeight: 600, textDecoration: "none", fontFamily: "sans-serif" }}>About David</a>
@@ -469,9 +478,8 @@ function AuthorPage() {
                 alt="David Moloney"
                 style={{
                   width: 220, height: "auto",
-                  borderRadius: "12px 12px 0 0",
                   display: "block",
-                  filter: "drop-shadow(-12px 12px 30px rgba(0,0,0,0.5))",
+                  filter: "drop-shadow(-8px 8px 24px rgba(0,0,0,0.6))",
                 }}
               />
               <img
@@ -516,49 +524,18 @@ function AuthorPage() {
 
           {/* Video embed */}
           <div style={{ position: "relative", borderRadius: 16, overflow: "hidden", boxShadow: "0 20px 60px rgba(0,0,0,0.2)", background: "#000" }}>
-            {!videoPlaying ? (
-              <div
-                onClick={() => setVideoPlaying(true)}
-                style={{ position: "relative", cursor: "pointer" }}
-              >
-                <img
-                  src={`https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg`}
-                  alt="Video thumbnail"
-                  style={{ width: "100%", display: "block", opacity: 0.75 }}
-                  onError={e => { e.target.style.minHeight = "360px"; e.target.style.background = "#1a1a2e"; }}
-                />
-                <div style={{
-                  position: "absolute", inset: 0,
-                  display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-                  background: "linear-gradient(135deg, rgba(17,17,17,0.7), rgba(230,41,18,0.5))",
-                }}>
-                  <div style={{
-                    width: 72, height: 72, borderRadius: "50%",
-                    background: red, display: "flex", alignItems: "center", justifyContent: "center",
-                    boxShadow: `0 8px 32px rgba(230,41,18,0.5)`,
-                    marginBottom: 16,
-                  }}>
-                    <span style={{ fontSize: 28, marginLeft: 4 }}>▶</span>
-                  </div>
-                  <p style={{ color: "white", fontWeight: 700, fontSize: 16, fontFamily: "sans-serif" }}>David Moloney — Introduction</p>
-                  <p style={{ color: "rgba(255,255,255,0.7)", fontSize: 13, fontFamily: "sans-serif" }}>3:42</p>
-                </div>
-              </div>
-            ) : (
-              <iframe
-                width="100%" height="450"
-                src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
-                title="David Moloney introduction"
-                frameBorder="0"
-                allow="autoplay; encrypted-media"
-                allowFullScreen
-                style={{ display: "block" }}
-              />
-            )}
+            <video
+              controls
+              poster="/david-moloney.png"
+              style={{ width: "100%", display: "block", maxHeight: 500 }}
+            >
+              <source src="/david-intro.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
           </div>
 
           <p style={{ textAlign: "center", color: "#6B7280", fontSize: 13, marginTop: 16, fontFamily: "sans-serif" }}>
-            Replace this with David's actual intro video · <a href="mailto:hello@pointsstore.app" style={{ color: red }}>Upload via email</a>
+            David Moloney · <a href="mailto:hello@pointsstore.app" style={{ color: red }}>Contact David</a>
           </p>
         </div>
       </div>
@@ -569,16 +546,19 @@ function AuthorPage() {
           {/* Photo placeholder */}
           <div style={{ flex: "0 0 auto" }}>
             <div style={{
-              width: 240, height: 300,
+              width: 240, height: 320,
+              background: `linear-gradient(160deg, #111 0%, #222 100%)`,
               borderRadius: 16,
               overflow: "hidden",
               boxShadow: "0 16px 48px rgba(0,0,0,0.3)",
               position: "relative",
             }}>
+              <TailFin width={200} color={red} opacity={0.9}
+                style={{ position: "absolute", bottom: -20, right: -20 }} />
               <img
                 src="/david-moloney.png"
                 alt="David Moloney"
-                style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }}
+                style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "bottom center", display: "block", position: "relative", zIndex: 1 }}
               />
             </div>
             {/* Book cover small */}
@@ -657,7 +637,7 @@ function AuthorPage() {
       {/* ── Footer ── */}
       <div style={{ background: "#0A0A0A", padding: "24px", textAlign: "center" }}>
         <div style={{ marginBottom: 6, display: "flex", justifyContent: "center" }}>
-          <Wordmark size={18} />
+          <Wordmark size={18} dark />
         </div>
         <p style={{ color: "rgba(255,255,255,0.35)", fontSize: 12, fontFamily: "sans-serif" }}>
           © 2025 POINTSMaster · A platform by ICG · <a href="mailto:hello@pointsstore.app" style={{ color: "rgba(255,255,255,0.35)" }}>hello@pointsstore.app</a>
