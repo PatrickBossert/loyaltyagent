@@ -32,7 +32,7 @@ function TailFin({ width = 120, opacity = 1, color = red, style = {} }) {
 function Wordmark({ size = 23, dark = false }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 5, lineHeight: 1 }}>
-      <TailFin width={size * 0.65} style={{ marginTop: -1 }} />
+      <img src="/favicon.png" alt="" style={{ width: size * 0.75, height: size * 0.75, display: "block", imageRendering: "crisp-edges" }} />
       <span style={{
         fontFamily: "'Barlow Condensed', sans-serif",
         fontWeight: 900, fontSize: size, letterSpacing: "0.01em",
@@ -751,9 +751,9 @@ function RegistrationApp() {
       <style>{CSS}</style>
       <Shell step={4} done={true}>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: 15, position: "relative" }}>
-          {/* Ghost tail fin watermark */}
-          <div style={{ position: "absolute", top: -18, right: -18, pointerEvents: "none", zIndex: 0 }}>
-            <TailFin width={160} opacity={0.06} color={red} />
+          {/* Ghost tail motif watermark */}
+          <div style={{ position: "absolute", top: -18, right: -18, pointerEvents: "none", zIndex: 0, opacity: 0.08 }}>
+            <img src="/favicon.png" alt="" style={{ width: 160, height: 160, display: "block", imageRendering: "crisp-edges" }} />
           </div>
           <div style={{ width: 72, height: 72, borderRadius: "50%", background: `linear-gradient(135deg, ${red}22, ${red}44)`, border: `2px solid ${red}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36, position: "relative", zIndex: 1 }}>🎉</div>
           <div style={{ position: "relative", zIndex: 1 }}>
