@@ -470,7 +470,7 @@ function AuthorPage() {
             </div>
 
             {/* Right: tail motif behind David, book overlapping right */}
-            <div id="book" style={{ flex: "0 0 auto", alignSelf: "flex-end", display: "flex", alignItems: "flex-end" }}>
+            <div id="book" style={{ flex: "0 0 auto", alignSelf: "flex-end", display: "flex", alignItems: "flex-end", marginLeft: -45 }}>
               {/* Fixed box — tail motif fills it, David at 67% height (1.5x ratio) */}
               <div style={{ position: "relative", width: 320, height: 420, flexShrink: 0 }}>
                 <img
@@ -571,7 +571,7 @@ function AuthorPage() {
       {/* ── About David ── */}
       <div id="about" style={{ background: "white", padding: "72px 24px" }}>
         <div style={{ maxWidth: 900, margin: "0 auto", display: "flex", gap: 64, flexWrap: "wrap", alignItems: "flex-start" }}>
-          {/* Photo placeholder */}
+          {/* Photo */}
           <div style={{ flex: "0 0 auto" }}>
             <div style={{
               width: 240, height: 320,
@@ -581,20 +581,26 @@ function AuthorPage() {
               boxShadow: "0 16px 48px rgba(0,0,0,0.3)",
               position: "relative",
             }}>
-              <TailFin width={220} color={red} opacity={0.95}
-                style={{ position: "absolute", bottom: -10, right: -10, zIndex: 0 }} />
+              {/* Tail motif fills background */}
               <img
-                src="/david-moloney.png"
+                src="/tail motif alpha.png"
+                alt=""
+                style={{
+                  position: "absolute", bottom: 0, left: "50%",
+                  transform: "translateX(-50%)",
+                  height: "100%", width: "auto",
+                  display: "block", zIndex: 0,
+                }}
+              />
+              {/* David small — 70% height, alpha over tail */}
+              <img
+                src="/david-moloney-small.png"
                 alt="David Moloney"
                 style={{
-                  position: "absolute",
-                  bottom: 0,
-                  left: "50%",
+                  position: "absolute", bottom: 0, left: "50%",
                   transform: "translateX(-50%)",
-                  height: "100%",
-                  width: "auto",
-                  display: "block",
-                  zIndex: 1,
+                  height: "70%", width: "auto",
+                  display: "block", zIndex: 1,
                 }}
               />
             </div>
