@@ -487,8 +487,8 @@ function AuthorPage() {
                   src="/DavidM.png"
                   alt="David Moloney"
                   style={{
-                    position: "absolute", bottom: 0, left: "50%",
-                    transform: "translateX(-50%)",
+                    position: "absolute", bottom: -15, left: "50%",
+                    transform: "translateX(calc(-50% - 20px))",
                     height: "67%", width: "auto",
                     display: "block", zIndex: 1,
                   }}
@@ -504,7 +504,7 @@ function AuthorPage() {
                   boxShadow: "-8px 8px 30px rgba(0,0,0,0.6)",
                   display: "block",
                   position: "relative", zIndex: 2,
-                  marginLeft: -40, flexShrink: 0,
+                  marginLeft: -82, flexShrink: 0,
                   alignSelf: "flex-end",
                 }}
               />
