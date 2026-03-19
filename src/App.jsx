@@ -424,7 +424,7 @@ function AuthorPage() {
       <div style={{
         background: `linear-gradient(150deg, #111111 0%, #1a1a1a 60%, #222 100%)`,
         padding: "72px 24px 0",
-        overflow: "hidden",
+        overflow: "visible",
         position: "relative",
       }}>
 
@@ -469,36 +469,42 @@ function AuthorPage() {
               </div>
             </div>
 
-            {/* Right: tail fin as base, David on top, book in front */}
-            <div id="book" style={{ flex: "0 0 auto", alignSelf: "flex-end", display: "flex", alignItems: "flex-end", gap: 0 }}>
-              {/* Tail fin + David stacked in the same box */}
-              <div style={{ position: "relative", width: 280, height: 340, flexShrink: 0 }}>
-                {/* Tail fin fills the box — renders in background */}
-                <TailFin width={320} color={red} opacity={1}
-                  style={{ position: "absolute", bottom: 0, left: -20, zIndex: 0 }} />
-                {/* David PNG — alpha punches through to reveal tail fin */}
+            {/* Right: tail motif behind David, book overlapping right */}
+            <div id="book" style={{ flex: "0 0 auto", alignSelf: "flex-end", display: "flex", alignItems: "flex-end" }}>
+              {/* Fixed box — tail motif fills it, David at 67% height (1.5x ratio) */}
+              <div style={{ position: "relative", width: 320, height: 420, flexShrink: 0 }}>
                 <img
-                  src="/david-moloney.png"
-                  alt="David Moloney"
+                  src="/tail motif alpha.png"
+                  alt=""
                   style={{
                     position: "absolute", bottom: 0, left: "50%",
                     transform: "translateX(-50%)",
                     height: "100%", width: "auto",
+                    display: "block", zIndex: 0,
+                  }}
+                />
+                <img
+                  src="/DavidM.png"
+                  alt="David Moloney"
+                  style={{
+                    position: "absolute", bottom: 0, left: "50%",
+                    transform: "translateX(-50%)",
+                    height: "67%", width: "auto",
                     display: "block", zIndex: 1,
                   }}
                 />
               </div>
-              {/* Book cover — in front */}
+              {/* Book cover — slightly overlapping David */}
               <img
                 src="/book-cover.jpg"
-                alt="Points book"
+                alt="Points — Mastering the Game of Frequent Flyers by David Moloney"
                 style={{
                   width: 150, height: "auto",
                   borderRadius: "6px 6px 0 0",
                   boxShadow: "-8px 8px 30px rgba(0,0,0,0.6)",
                   display: "block",
                   position: "relative", zIndex: 2,
-                  marginLeft: -24, flexShrink: 0,
+                  marginLeft: -40, flexShrink: 0,
                   alignSelf: "flex-end",
                 }}
               />
