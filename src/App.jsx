@@ -563,7 +563,7 @@ function AuthorPage() {
           </div>
 
           <p style={{ textAlign: "center", color: "#6B7280", fontSize: 13, marginTop: 16, fontFamily: "sans-serif" }}>
-            David Moloney · <a href="mailto:hello@pointsstore.app" style={{ color: red }}>Contact David</a>
+            David Moloney · <a href="mailto:david.moloney@internalconsulting.com" style={{ color: red }}>Contact David</a>
           </p>
         </div>
       </div>
@@ -592,14 +592,13 @@ function AuthorPage() {
                   display: "block", zIndex: 0,
                 }}
               />
-              {/* David small — 70% height, alpha over tail */}
+              {/* DavidMSmall — full card width, alpha over tail */}
               <img
-                src="/david-moloney-small.png"
+                src="/DavidMSmall.png"
                 alt="David Moloney"
                 style={{
-                  position: "absolute", bottom: 0, left: "50%",
-                  transform: "translateX(-50%)",
-                  height: "70%", width: "auto",
+                  position: "absolute", bottom: 0, left: 0,
+                  width: "100%", height: "auto",
                   display: "block", zIndex: 1,
                 }}
               />

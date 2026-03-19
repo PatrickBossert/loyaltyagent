@@ -1,7 +1,4 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32">
   <rect width="32" height="32" rx="5" fill="#111111"/>
-  <!-- Tail motif fills the square -->
-  <image href="/tail motif alpha.png" x="0" y="0" width="32" height="32" preserveAspectRatio="xMidYMax meet"/>
-  <!-- David at 70% of tail height, bottom-aligned, centred -->
-  <image href="/david-moloney-small.png" x="4" y="9" width="24" height="23" preserveAspectRatio="xMidYMax meet"/>
+  <image href="/tail motif alpha.png" x="0" y="0" width="32" height="32" preserveAspectRatio="xMidYMid meet"/>
 </svg>
