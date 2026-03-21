@@ -948,13 +948,59 @@ function RegistrationApp() {
   return null;
 }
 
+function PasswordGate({ children }) {
+  const [unlocked, setUnlocked] = React.useState(
+    () => sessionStorage.getItem("pm_auth") === "1"
+  );
+  const [input, setInput] = React.useState("");
+  const [error, setError] = React.useState(false);
+
+  if (unlocked) return children;
+
+  return (
+    <div style={{ background: "#111", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "sans-serif" }}>
+      <div style={{ background: "white", borderRadius: 16, padding: "40px 32px", width: 320, textAlign: "center", boxShadow: "0 20px 60px rgba(0,0,0,0.4)" }}>
+        <img src="/favicon.png" style={{ width: 48, marginBottom: 16 }} alt="" />
+        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: 24, marginBottom: 4 }}>
+          <span style={{ color: "#111" }}>POINTS</span><span style={{ color: "#E62912" }}>Master</span>
+        </div>
+        <p style={{ fontSize: 13, color: "#6B7280", marginBottom: 24 }}>Enter access code to continue</p>
+        <input
+          type="password"
+          value={input}
+          placeholder="Access code"
+          onChange={e => { setInput(e.target.value); setError(false); }}
+          onKeyDown={e => {
+            if (e.key === "Enter") {
+              if (input === "RACA26") { sessionStorage.setItem("pm_auth", "1"); setUnlocked(true); }
+              else setError(true);
+            }
+          }}
+          style={{ width: "100%", padding: "12px 14px", border: `1.5px solid ${error ? "#EF4444" : "#E5E7EB"}`, borderRadius: 10, fontSize: 16, outline: "none", marginBottom: 8, boxSizing: "border-box" }}
+          autoFocus
+        />
+        {error && <p style={{ fontSize: 12, color: "#EF4444", marginBottom: 8 }}>Incorrect code</p>}
+        <button
+          onClick={() => {
+            if (input === "RACA26") { sessionStorage.setItem("pm_auth", "1"); setUnlocked(true); }
+            else setError(true);
+          }}
+          style={{ width: "100%", padding: "13px", background: "#E62912", color: "white", border: "none", borderRadius: 10, fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: "0.06em" }}
+        >ENTER →</button>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   return (
+    <PasswordGate>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<RegistrationApp />} />
         <Route path="/davidmoloney" element={<AuthorPage />} />
       </Routes>
     </BrowserRouter>
+    </PasswordGate>
   );
 }
