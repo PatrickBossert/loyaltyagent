@@ -949,11 +949,11 @@ function RegistrationApp() {
 }
 
 function PasswordGate({ children }) {
-  const [unlocked, setUnlocked] = React.useState(
+  const [unlocked, setUnlocked] = useState(
     () => sessionStorage.getItem("pm_auth") === "1"
   );
-  const [input, setInput] = React.useState("");
-  const [error, setError] = React.useState(false);
+  const [input, setInput] = useState("");
+  const [error, setError] = useState(false);
 
   if (unlocked) return children;
 
