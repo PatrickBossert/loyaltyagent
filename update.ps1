@@ -12,7 +12,7 @@ $Downloads = "$env:USERPROFILE\Downloads\$ZipName"
 $Desktop   = "$env:USERPROFILE\Desktop\$ZipName"
 
 Write-Host ""
-Write-Host ">> LoyaltyAgent.ai - Update & Deploy" -ForegroundColor Cyan
+Write-Host ">> POINTSMaster - Update & Deploy" -ForegroundColor Cyan
 Write-Host ""
 
 # Find the zip (check Downloads then Desktop)
@@ -71,5 +71,5 @@ git push origin main
 
 Write-Host ""
 Write-Host ">> Done! Cloudflare will deploy in ~1 minute." -ForegroundColor Green
-Write-Host "   Live at: https://loyaltyagent.ai" -ForegroundColor Cyan
+Write-Host "   Live at: https://pointsmaster.app" -ForegroundColor Cyan
 Write-Host ""

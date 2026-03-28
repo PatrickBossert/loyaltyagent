@@ -1,6 +1,6 @@
-# deploy.ps1 - Push latest changes to GitHub
-# Usage: Right-click → "Run with PowerShell", or run from terminal: .\deploy.ps1
-# Optionally pass a commit message: .\deploy.ps1 "Updated logo styling"
+# deploy.ps1 - Commit and push changes to the dev branch
+# Usage: .\deploy.ps1 "what you changed"
+# To publish to production, use .\publish.ps1 instead
 
 param(
     [string]$Message = ""
@@ -11,8 +11,20 @@ if ($Message -eq "") {
     $Message = "Site update " + (Get-Date -Format "yyyy-MM-dd HH:mm")
 }
 
+# Guard: warn if accidentally run on main
+$currentBranch = git rev-parse --abbrev-ref HEAD
+if ($currentBranch -eq "main") {
+    Write-Host ""
+    Write-Host ">> You are on the main branch." -ForegroundColor Yellow
+    Write-Host "   Use .\publish.ps1 to deploy to production." -ForegroundColor Yellow
+    Write-Host "   Run 'git checkout dev' to switch to dev first." -ForegroundColor Yellow
+    Write-Host ""
+    exit 1
+}
+
 Write-Host ""
-Write-Host ">> LoyaltyAgent.ai - Deploying to GitHub" -ForegroundColor Cyan
+Write-Host ">> POINTSMaster - Saving to dev" -ForegroundColor Cyan
+Write-Host "   Branch: $currentBranch" -ForegroundColor Gray
 Write-Host "   Commit: $Message" -ForegroundColor Gray
 Write-Host ""
 
@@ -32,6 +44,6 @@ git commit -m $Message
 git push origin main
 
 Write-Host ""
-Write-Host ">> Done! Cloudflare will deploy in ~1 minute." -ForegroundColor Green
-Write-Host "   Live at: https://loyaltyagent.ai" -ForegroundColor Cyan
+Write-Host ">> Done! Cloudflare will update the dev preview in ~1 minute." -ForegroundColor Green
+Write-Host "   Run .\publish.ps1 when ready to go live." -ForegroundColor Gray
 Write-Host ""

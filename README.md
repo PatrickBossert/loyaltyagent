@@ -1,4 +1,4 @@
-# LoyaltyAgent.ai — Demonstrator Site
+# POINTSMaster — pointsmaster.app
 
 Companion website for *Australia's Points Economy* — an AI-powered loyalty points optimisation platform.
 
@@ -89,7 +89,7 @@ In your GitHub repo → **Settings** → **Secrets and variables** → **Actions
 ### 4. Connect Custom Domain
 
 1. In Cloudflare Pages → your project → **Custom domains**
-2. Add `loyaltyagent.ai`
+2. Add `pointsmaster.app`
 3. Since your domain is already on Cloudflare, the DNS CNAME will be added automatically
 
 ---
@@ -98,7 +98,7 @@ In your GitHub repo → **Settings** → **Secrets and variables** → **Actions
 
 | Trigger | Result |
 |---|---|
-| Push to `main` | Auto-deploys to `loyaltyagent.ai` |
+| Push to `main` | Auto-deploys to `pointsmaster.app` |
 | Open a Pull Request | Deploys a preview URL, posts it as a PR comment |
 | Merge PR to `main` | Deploys preview to production |
 
