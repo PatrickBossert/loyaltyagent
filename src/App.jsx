@@ -682,7 +682,7 @@ function AuthorPage() {
           <Wordmark size={18} dark />
         </div>
         <p style={{ color: "rgba(255,255,255,0.35)", fontSize: 12, fontFamily: "sans-serif" }}>
-          © 2025 POINTSMaster · A platform by ICG · <a href="mailto:hello@pointsmaster.app" style={{ color: "rgba(255,255,255,0.35)" }}>hello@pointsmaster.app</a>
+          © 2026 POINTSMaster · A platform by ICG · <a href="mailto:hello@pointsmaster.app" style={{ color: "rgba(255,255,255,0.35)" }}>hello@pointsmaster.app</a>
         </p>
       </div>
     </div>
